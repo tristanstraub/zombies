@@ -14,6 +14,11 @@ Zombie.EaselBridge = Ember.Object.extend({
 		createjs.Ticker.addListener(function() { listener.tick(); });
   },
 
+  removeShapeFromStage: function(shape) {
+    var stage = get(this, 'stage');
+    stage.removeChild(get(shape, 'shape'));
+  },
+
   addShapeToStage: function(shape) {
     var stage = get(this, 'stage');
     stage.addChild(get(shape, 'shape'));
@@ -42,7 +47,33 @@ Zombie.EaselBridge = Ember.Object.extend({
 });
 
 Zombie.Object = Ember.Object.extend({
-  bridge: null
+  bridge: null,
+
+  // createPropertyDelegates: function(names) {
+  //   names.forEach(function(name) {
+  //     var value = get(this, name);
+  //     if (Zombie.Object.detectInstance(value)) {
+  //       var delegate = value.createDelegate();
+  //       set(this, name, delegate);
+  //     }
+  //   }, this);
+  // },
+
+  // init: function() {
+  //   this._super.apply(this, arguments);
+
+  //   if (get(this, 'isDelegate')) {
+  //     Ember.beginPropertyChanges();
+
+  //     this.createPropertyDelegates([]);
+
+  //     Ember.endPropertyChanges();
+  //   }
+  // },
+
+  createDelegate: function() {
+    return Ember.copy(this);
+  }
 });
 
 Zombie.Factory = Ember.Object.extend({
@@ -82,7 +113,10 @@ Zombie.GameLoop = Zombie.Object.extend({
 
 Zombie.shapePropertySetter = Ember.computed(function(key, value, oldvalue) {
   if (arguments.length > 1) {
-    get(this, 'bridge').setShapeProperty(this, key, value);
+    var shape = get(this, 'shape');
+    if (shape) {
+      shape[key] = value;
+    }
   }
 
   return value;
@@ -96,46 +130,80 @@ Zombie.Shape = Zombie.Object.extend({
   scaleX: Zombie.shapePropertySetter,
   scaleY: Zombie.shapePropertySetter,
 
+  draw: Ember.K,
+
   init: function() {
     this._super.apply(this, arguments);
     set(this, 'shape', new createjs.Shape());
-    
-    get(this, 'bridge').addShapeToStage(this);
   },
 
-  clear: function() {
-    get(this, 'bridge').clearShape(this);
+  removeFromStage: function(bridge) {
+    bridge = bridge || get(this, 'bridge');
+    set(this, 'bridge', bridge);
+
+    bridge.removeShapeFromStage(this);
+  },
+
+  addToStage: function(bridge) {
+    bridge = bridge || get(this, 'bridge');
+    set(this, 'bridge', bridge);
+
+    this.draw(bridge);
+    bridge.addShapeToStage(this);
+  },
+
+  removeFromStage: Ember.K,
+
+  clear: function(bridge) {
+    (bridge || get(this, 'bridge')).clearShape(this);
   }  
 });
 
-Zombie.Path = Zombie.Shape.extend({
+Zombie.Path = Zombie.Shape.extend(Ember.Copyable, {
   path: null,
 
-  didPathChange: function() {
+  copy: function(deep) {
+    return Zombie.Path.create({
+      path: get(this, 'path')
+    });
+  },
+
+  // createPropertyDelegates: function(names) {
+  //   names.addObject('pathTemplate');
+  //   this._super.apply(this, arguments);
+  // },
+
+  draw: function(bridge) {
     if (get(this, 'path')) {
-      this.clear();
-      get(this, 'bridge').shapeDecodePath(this);
+      this.clear(bridge);
+      (bridge || get(this, 'bridge')).shapeDecodePath(this);
     }
+  },
+
+  pathChanged: function() {
+    this.draw();
   }.observes('path')
 });
 
 Zombie.PathTemplate = Zombie.Object.extend({
   pathTemplate: '',
 
+  // createPropertyDelegates: function(names) {
+  //   names.addObject('pathTemplate');
+  //   this._super.apply(this, arguments);
+  // },
+
   compiledPathTemplate: function() {
     return Handlebars.compile(get(this, 'pathTemplate'));
   }.property('pathTemplate'),
 
   path: function() { 
-    console.log('change');
-    console.log(get(this, 'compiledPathTemplate')(this));
     return get(this, 'compiledPathTemplate')(this);
   }.property('compiledPathTemplate'),
 
   observes: function() {
     var properties = Array.prototype.slice.apply(arguments);
     var notify = function() {
-      console.log('something chnged');
       this.notifyPropertyChange('pathTemplate');
     };
     properties.forEach(function(property) {
