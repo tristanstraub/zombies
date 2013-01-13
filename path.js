@@ -1,7 +1,4 @@
-
-encodePath = function(path) {
-  var size = 18;
-
+(function() {
   var table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
 
   var base64_1 = function(value) {
@@ -38,20 +35,33 @@ encodePath = function(path) {
     }
   };
 
-  var counts = { M: 2, L: 2, Q: 4, B: 6 }
-  var count = 0;
+  encodePath = function(path, listener) {
+    var size = 18;
 
-  var encoded = [];
-  path.split(/ /).forEach(function(item) {
-    if (!count) { 
-      count = counts[item];
-      var b = encodeHeader(item, size);
-      encoded.push(base64_1(b));
-    } else if (count--) {
-      var b = encodeValue(item, size);
-      encoded.push(base64_3(b));
-    }
-  });
+    var counts = { M: 2, L: 2, Q: 4, B: 6 }
+    var count = 0;
 
-  return encoded.join('');
-};
+    var args = [];
+    var encoded = [];
+    path.split(/ /).forEach(function(item) {
+      if (count == 0) { 
+        count = counts[item];
+        var b = encodeHeader(item, size);
+        encoded.push(base64_1(b));
+      } else if (count--) {
+        var b = encodeValue(item, size);
+        encoded.push(base64_3(b));
+      }
+
+      if (listener) {
+        args.push(item);
+        if (count == 0) {
+          listener.apply(this, args);
+          args = [];
+        }
+      }
+    });
+
+    return encoded.join('');
+  };
+})();
