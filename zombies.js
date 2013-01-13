@@ -145,6 +145,18 @@ require(['handlebars'], function() {
       mouseLeave: function(event) {}
     });
  
+    var highlightShapes = function(manager, event) {
+      var router = event.targetObject;
+      var canvasView = event.context;
+      
+      var offset = canvasView.$().offset();
+      var shapes = canvasView.shapesAtPoint(event.clientX - offset.left, event.clientY - offset.top);
+      
+      if (shapes.length > 0) {
+        router.send('highlightShapes', shapes);
+      }
+    };
+
     var MouseDragManager = Ember.StateManager.extend({
 //      enableLogging: true,
       initialState: 'up',
@@ -152,6 +164,10 @@ require(['handlebars'], function() {
         up: MouseState.create({
           mouseDown: function(manager, event) {
             manager.transitionTo('down', event);
+          },
+
+          mouseMove: function(manager, event) {
+            highlightShapes(manager, event);
           }
         }),
 
@@ -174,6 +190,8 @@ require(['handlebars'], function() {
           },
 
           mouseMove: function(manager, event) {
+            highlightShapes(manager, event);
+
             var canvasView = event.context;
             var offset = canvasView.$().offset();
 
@@ -191,6 +209,10 @@ require(['handlebars'], function() {
           },
 
           mouseUp: function(manager, event) {
+            var router = event.targetObject;
+
+            router.send('draggingShapes', []);
+
             manager.transitionTo('up');
           }
         }),
@@ -204,8 +226,7 @@ require(['handlebars'], function() {
             var shapes = canvasView.shapesAtPoint(event.clientX - offset.left, event.clientY - offset.top);
 
             if (shapes.length > 0) {
-              event.contexts = shapes;
-              router.send('selectShapes', event);
+              router.send('draggingShapes', shapes);
 
               manager.transitionTo('dragging', { event: event, shapes: shapes, x: event.clientX - offset.left, y: event.clientY - offset.top });
             }
@@ -346,7 +367,7 @@ require(['handlebars'], function() {
     });
 
     Animator.initialize(Ember.Router.create({
-      enableLogging: true,
+//      enableLogging: true,
       location: 'hash',
       root: Ember.Route.extend({
         index: Ember.Route.extend({
@@ -372,10 +393,12 @@ require(['handlebars'], function() {
           canvasMouseDown: function(router, event, shapesAtPoint, x, y) {
           },
 
-          selectShapes: function(router, event) {
-            var shapes = event.contexts;
+          draggingShapes: function(router, shapes) {
+            set(this, 'context.draggedShapes', shapes.mapProperty('brush'));
+          },
 
-            set(this, 'context.selectedShapes', shapes.mapProperty('brush'));
+          highlightShapes: function(router, shapes) {
+            set(this, 'context.highlightedShapes', shapes.mapProperty('brush'));
           },
 
           canvasClicked: function(router, event, shapesAtPoint, x, y) {
@@ -442,7 +465,8 @@ require(['handlebars'], function() {
               brushes:[shape],
               shapes: [],
               selectedBrush: null,
-              selectedShapes: [],
+              draggedShapes: [],
+              highlightedShapes: [],
               canvasMouseStateManager: MouseDragManager.create()
             });
 

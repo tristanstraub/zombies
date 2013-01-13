@@ -8,6 +8,7 @@
     <style type="text/css">
       ul { list-style: none; }
       .selected { background-color: red; }
+      .highlighted { border: 3px solid green; }
       .brushes li { float: left; }
       .shapes li { float: left; }
       .canvas { float: left; }
@@ -41,8 +42,10 @@
       <ul class="shapes">
         {{#each shape in content.shapes}}
         <li>
-          {{#view Animator.ComparisonView leftBinding="shape" rightBinding="content.selectedShapes"}}
-          <button {{bindAttr class="view.contains:selected"}}>
+          {{#view}}
+          {{view Animator.ComparisonView leftBinding="shape" rightBinding="content.draggedShapes" viewName="draggedShapes"}}
+          {{view Animator.ComparisonView leftBinding="shape" rightBinding="content.highlightedShapes" viewName="highlightedShapes"}}
+          <button {{bindAttr class="view.draggedShapes.contains:selected view.highlightedShapes.contains:highlighted"}}>
             {{shape}}
           {{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
           </button>
@@ -55,6 +58,16 @@
         </li>
         {{/each}}
       </ul>
+
+      Properties
+      <ul class="shapes">
+        {{#each shape in content.selectedShapes}}
+        <li>
+          {{shape.properties.dump}}
+        </li>
+        {{/each}}
+      </ul>
+
 
       Timeline
       {{view Animator.TimelineView}}

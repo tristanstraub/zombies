@@ -50,7 +50,11 @@ Zombie.EaselBridge = Ember.Object.extend({
 });
 
 Zombie.Object = Ember.Object.extend({
-  bridge: null
+  bridge: null,
+
+  dump: function() {
+    return Ember.inspect(this);
+  }.property().volatile()
 });
 
 Zombie.Factory = Ember.Object.extend({
