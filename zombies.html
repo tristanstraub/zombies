@@ -6,7 +6,11 @@
     <meta name="viewport" content="height=device-height,width=device-width,initial-scale=1.0,maximum-scale=1.0" />
 
     <style type="text/css">
-      .selected { background-color: red; }
+      ul { list-style: none; }
+      .selected { border-color: red; }
+      .brushes li { float: left; }
+      .shapes li { float: left; }
+      .canvas { float: left; }
     </style>
   </head>
   <body>
@@ -14,43 +18,28 @@
       {{outlet main}}
     </script>
 
-    <script type="text/x-handlebars" data-template-name="canvas">
-      <canvas 
-         {{bindAttr width="view.width"}} 
-         {{bindAttr height="view.height"}} style="border: 1px dotted black;"
-
-         {{action mouseDown view on="mouseDown" target="view" }}
-         {{action mouseUp view on="mouseUp" target="view" }}
-         {{action mouseMove view on="mouseMove" target="view" }}
-         {{action mouseEnter view on="mouseEnter" target="view" }}
-         {{action mouseLeave view on="mouseLeave" target="view" }}>
-      </canvas>
-    </script>
-
-    <script type="text/x-handlebars" data-template-name="part">
-      <canvas id="canvas" {{bindAttr width="view.width"}} {{bindAttr height="view.height"}} style="border: 1px dotted black;"></canvas>
-    </script>
-
     <script type="text/x-handlebars" data-template-name="workspace">
       Brushes
       <ul class="brushes">
-        {{#each part in content.brushes}}
-        {{#view Animator.ComparisonView leftBinding="content.selectedBrush" rightBinding="part"}}
+        {{#each shape in content.brushes}}
+        {{#view Animator.ComparisonView leftBinding="content.selectedShape" rightBinding="part"}}
         <li>
-          <button {{action selectBrush part}} {{bindAttr class="view.equal:selected"}}>
-            {{view Animator.PartView partBinding="part" width="32" height="32"}}{{/view}}
+          <button {{action selectShape shape}} {{bindAttr class="view.equal:selected"}}>
+            {{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}{{/view}}
           </button>
         </li>
         {{/each}}
       </ul>
 
       Canvas
-      {{view Animator.CanvasView width="640" height="480"}}
+      <div class="canvas">
+        {{view Animator.CanvasView canvasWidth="640" canvasHeight="480" mouseStateManagerBinding="content.canvasMouseStateManager"}}
+      </div>
       
       Shapes
       <ul class="shapes">
         {{#each shape in content.shapes}}
-        <li>{{view Animator.ShapeView shapeBinding="shape" width="64" height="64"}}
+        <li>{{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
           <ul>
             {{#each animation in part.properties.animations}}
             <li><a href="#" {{action animate part animation}}>{{this.name}}</a></li>

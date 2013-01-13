@@ -35,45 +35,22 @@ Zombie.EaselBridge = Ember.Object.extend({
     }
   },
 
+  shapeEncodePath: function(path, listener) {
+    return encodePath(get(path, 'path'), listener);
+  },
+
   shapeDecodePath: function(path) {
-    var rendered = get(path, 'path');
     var shape = get(path, 'shape');
     var graphics = shape.graphics;
 
     graphics.setStrokeStyle(1);
     graphics.beginStroke("#113355");
-    graphics.decodePath(encodePath(rendered));
+    graphics.decodePath(this.shapeEncodePath(path));
   }
 });
 
 Zombie.Object = Ember.Object.extend({
-  bridge: null,
-
-  // createPropertyDelegates: function(names) {
-  //   names.forEach(function(name) {
-  //     var value = get(this, name);
-  //     if (Zombie.Object.detectInstance(value)) {
-  //       var delegate = value.createDelegate();
-  //       set(this, name, delegate);
-  //     }
-  //   }, this);
-  // },
-
-  // init: function() {
-  //   this._super.apply(this, arguments);
-
-  //   if (get(this, 'isDelegate')) {
-  //     Ember.beginPropertyChanges();
-
-  //     this.createPropertyDelegates([]);
-
-  //     Ember.endPropertyChanges();
-  //   }
-  // },
-
-  createDelegate: function() {
-    return Ember.copy(this);
-  }
+  bridge: null
 });
 
 Zombie.Factory = Ember.Object.extend({
@@ -111,6 +88,27 @@ Zombie.GameLoop = Zombie.Object.extend({
   }
 });
 
+Zombie.copyProperties = function() {
+  var names = Array.prototype.slice.apply(arguments);
+  return function(properties) {
+    this._super.call(this, properties);
+    
+    names.forEach(function(name) {
+      properties[name] = Ember.copy(get(this, name));
+    }, this);
+  };
+};
+
+Zombie.Properties = Ember.Object.extend(Ember.Copyable, {
+  copyProperties: Ember.K,
+
+  copy: function() {
+    var properties = {};
+    this.copyProperties(properties);
+    return this.constructor.create(properties);
+  }
+});
+
 Zombie.shapePropertySetter = Ember.computed(function(key, value, oldvalue) {
   if (arguments.length > 1) {
     var shape = get(this, 'shape');
@@ -122,7 +120,11 @@ Zombie.shapePropertySetter = Ember.computed(function(key, value, oldvalue) {
   return value;
 });
 
-Zombie.Shape = Zombie.Object.extend({
+Zombie.NeedsProperties = Ember.Mixin.create({
+  properties: null
+});
+
+Zombie.Shape = Zombie.Object.extend(Ember.Copyable, Zombie.NeedsProperties, {
   shape: null,
 
   x: Zombie.shapePropertySetter,
@@ -135,6 +137,22 @@ Zombie.Shape = Zombie.Object.extend({
   init: function() {
     this._super.apply(this, arguments);
     set(this, 'shape', new createjs.Shape());
+  },
+
+  createDelegate: function(deep) {
+    return Ember.copy(this, deep);
+  },
+
+  copy: function(deep) {
+    if (deep) {
+      properties = get(this, 'properties').copy(deep);
+    } else {
+      properties = get(this, 'properties');
+    }
+
+    return this.constructor.create({
+      properties: properties
+    });
   },
 
   removeFromStage: function(bridge) {
@@ -160,17 +178,76 @@ Zombie.Shape = Zombie.Object.extend({
 });
 
 Zombie.Path = Zombie.Shape.extend(Ember.Copyable, {
-  path: null,
+  pathBinding: 'properties.path',
 
-  copy: function(deep) {
-    return Zombie.Path.create({
-      path: get(this, 'path')
-    });
+  init: function() {
+    this._super.apply(this, arguments);
   },
 
-  // createPropertyDelegates: function(names) {
-  //   names.addObject('pathTemplate');
-  //   this._super.apply(this, arguments);
+  getContainedPoints: function(x,y,w,h) {
+    var self = this;
+    var points = [];
+
+    var lastpoint = null;
+    var traverseSegment = function(name, dx, dy) {
+      dx/=10;
+      dy/=10;
+
+      var point = null;
+
+      if (name === 'M') {
+        point = [dx, dy];
+      } else if (name === 'L') {
+        point = [lastpoint[0] + dx, lastpoint[1] + dy];
+      }
+
+      if (self.boxContainsPoint(x,y,w,h, point[0] + get(self, 'x'), point[1] + get(self, 'y'))) {
+        points.push(point);
+      }
+      lastpoint = point;
+    };
+    this.traversePath(traverseSegment);
+    return points;
+  },
+
+  wedge: function(a, b) {
+    return a[0]*b[1]-a[1]*b[0];
+  },
+
+  boxContainsPoint: function(x, y, w, h, x0, y0)  {
+    return (x <= x0 && x0 <= x + w && y <= y0 && y0 <= y + h);
+  },
+
+  // boxContainsLine: function(x, y, w, h, lx0, ly0, lx1, ly1)  {
+  //   // 1) poly on one side, or 2) one of two points inside poly 3) other of two points inside poly
+  
+  //   var sgn = function(x) { return x < 0 ? -1 : 1 };
+
+  //   var x0=x, x1=x+w, x2=x+w, x3=x;
+  //   var y0=y, y1=y,   y2=y+h, y2=y+h;
+
+  //   // 2) lx0, ly0
+  //   var s = sgn(wedge([lx1-lx0,ly1-lx0],[x-lx0, y-ly0]))
+  //     +sgn(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, h+y-ly0]))
+  //     +sgn(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, y-ly0]))
+  //     +sgn(wedge([lx1-lx0,ly1-lx0],[x-lx0, h+y-ly0]));
+  //   if (Math.abs(s) == 4)
+  //     return true;
+
+  //   // 3) lx1, ly1
+  //   var s = sgn(wedge([x1-x0,y1-y0],[x-lx0, y-ly0]))
+  //     +sgn(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, h+y-ly0]))
+  //     +sgn(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, y-ly0]))
+  //     +sgn(wedge([lx1-lx0,ly1-lx0],[x-lx0, h+y-ly0]));
+  //   if (Math.abs(s) == 4)
+  //     return true;
+
+  //   // 1)
+  //   var s = (wedge([lx1-lx0,ly1-lx0],[x-lx0, y-ly0]) < 0 ? -1 : 1)
+  //     +(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, h+y-ly0]) < 0 ? -1 : 1)
+  //     +(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, y-ly0]) < 0 ? -1 : 1)
+  //     +(wedge([lx1-lx0,ly1-lx0],[x-lx0, h+y-ly0]) < 0 ? -1 : 1);
+  //   return (Math.abs(s) !== 4);
   // },
 
   draw: function(bridge) {
@@ -180,18 +257,19 @@ Zombie.Path = Zombie.Shape.extend(Ember.Copyable, {
     }
   },
 
+  traversePath: function(listener) {
+    get(this, 'bridge').shapeEncodePath(this, listener);
+  },
+
   pathChanged: function() {
-    this.draw();
+    this.draw(get(this, 'bridge'));
   }.observes('path')
 });
 
-Zombie.PathTemplate = Zombie.Object.extend({
-  pathTemplate: '',
+Zombie.PathTemplate = Zombie.Properties.extend({
+  copyProperties: Zombie.copyProperties('pathTemplate'),
 
-  // createPropertyDelegates: function(names) {
-  //   names.addObject('pathTemplate');
-  //   this._super.apply(this, arguments);
-  // },
+  pathTemplate: '',
 
   compiledPathTemplate: function() {
     return Handlebars.compile(get(this, 'pathTemplate'));
@@ -213,3 +291,8 @@ Zombie.PathTemplate = Zombie.Object.extend({
   }
 });
 
+Zombie.PathTemplateProperty = function(name) {
+  return function() {
+    this.notifyPropertyChange('pathTemplate');    
+  }.observes(name);
+};
