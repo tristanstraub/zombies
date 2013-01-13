@@ -204,6 +204,9 @@ require(['handlebars'], function() {
             var shapes = canvasView.shapesAtPoint(event.clientX - offset.left, event.clientY - offset.top);
 
             if (shapes.length > 0) {
+              event.contexts = shapes;
+              router.send('selectShapes', event);
+
               manager.transitionTo('dragging', { event: event, shapes: shapes, x: event.clientX - offset.left, y: event.clientY - offset.top });
             }
           },
@@ -335,7 +338,11 @@ require(['handlebars'], function() {
       right: null,
       equal: function() {
         return get(this, 'left') === get(this, 'right');
-      }.property('left','right')
+      }.property('left','right'),
+      contains: function() {
+        var right = get(this, 'right');
+        return right.indexOf(get(this, 'left')) >= 0;
+      }.property('left','right'),
     });
 
     Animator.initialize(Ember.Router.create({
@@ -352,26 +359,34 @@ require(['handlebars'], function() {
             animation.animate(part);
           },
 
-          selectShape: function(router, event) {
+          selectBrush: function(router, event) {
             var shape = event.context;
             
-            if (shape === get(this, 'context.selectedShape')) {
-              set(this, 'context.selectedShape', null);
+            if (shape === get(this, 'context.selectedBrush')) {
+              set(this, 'context.selectedBrush', null);
             } else {
-              set(this, 'context.selectedShape', shape);
+              set(this, 'context.selectedBrush', shape);
             }
           },
 
           canvasMouseDown: function(router, event, shapesAtPoint, x, y) {
           },
 
+          selectShapes: function(router, event) {
+            var shapes = event.contexts;
+
+            set(this, 'context.selectedShapes', shapes.mapProperty('brush'));
+          },
+
           canvasClicked: function(router, event, shapesAtPoint, x, y) {
             var canvas = event.context;
-            var brush = get(this, 'context.selectedShape');
+            var brush = get(this, 'context.selectedBrush');
 
             if (brush && shapesAtPoint.length == 0) {
               var canvasDelegate = brush.createDelegate(true);
               var shapeDelegate = brush.createDelegate(true);
+              
+              set(canvasDelegate, 'brush', shapeDelegate);
 
               set(canvasDelegate, 'properties.shape.x', x);
               set(canvasDelegate, 'properties.shape.y', y);
@@ -426,7 +441,8 @@ require(['handlebars'], function() {
             var context = Z({
               brushes:[shape],
               shapes: [],
-              selectedShape: null,
+              selectedBrush: null,
+              selectedShapes: [],
               canvasMouseStateManager: MouseDragManager.create()
             });
 

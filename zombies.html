@@ -7,7 +7,7 @@
 
     <style type="text/css">
       ul { list-style: none; }
-      .selected { border-color: red; }
+      .selected { background-color: red; }
       .brushes li { float: left; }
       .shapes li { float: left; }
       .canvas { float: left; }
@@ -22,11 +22,12 @@
       Brushes
       <ul class="brushes">
         {{#each shape in content.brushes}}
-        {{#view Animator.ComparisonView leftBinding="content.selectedShape" rightBinding="part"}}
         <li>
-          <button {{action selectShape shape}} {{bindAttr class="view.equal:selected"}}>
-            {{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}{{/view}}
+          {{#view Animator.ComparisonView leftBinding="content.selectedBrush" rightBinding="shape"}}
+          <button {{action selectBrush shape}} {{bindAttr class="view.equal:selected"}}>
+            {{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
           </button>
+          {{/view}}
         </li>
         {{/each}}
       </ul>
@@ -39,10 +40,16 @@
       Shapes
       <ul class="shapes">
         {{#each shape in content.shapes}}
-        <li>{{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
+        <li>
+          {{#view Animator.ComparisonView leftBinding="shape" rightBinding="content.selectedShapes"}}
+          <button {{bindAttr class="view.contains:selected"}}>
+            {{shape}}
+          {{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
+          </button>
+          {{/view}}
           <ul>
-            {{#each animation in part.properties.animations}}
-            <li><a href="#" {{action animate part animation}}>{{this.name}}</a></li>
+            {{#each animation in shape.properties.animations}}
+            <li><a href="#" {{action animate shape animation}}>{{this.name}}</a></li>
             {{/each}}
           </ul>
         </li>

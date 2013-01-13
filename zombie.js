@@ -125,6 +125,8 @@ Zombie.NeedsProperties = Ember.Mixin.create({
 });
 
 Zombie.Shape = Zombie.Object.extend(Ember.Copyable, Zombie.NeedsProperties, {
+  id: function() { return Ember.guidFor(this); }.property(),
+
   shape: null,
 
   x: Zombie.shapePropertySetter,
