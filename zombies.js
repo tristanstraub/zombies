@@ -445,14 +445,6 @@ require(['handlebars'], function() {
                 })
               });
 
-//              console.log(get(pointShape, 'x'));
-
-              // set(pointShape, 'properties.shape.x', point[0]);
-              // set(pointShape, 'properties.shape.y', point[1]);
-
-              // set(pointShape, 'x', point[0]);
-              // set(pointShape, 'y', point[1]);
-
               canvasView.addShape(pointShape);
             });
           }.observes('highlightedPoints.@each'),
