@@ -35,9 +35,12 @@
 
       Canvas
       <div class="canvas">
-        {{view Animator.CanvasView canvasWidth="640" canvasHeight="480" mouseStateManagerBinding="content.canvasMouseStateManager"}}
+        {{view Animator.CanvasView canvasWidth="640" canvasHeight="480" mouseStateManagerBinding="content.canvasMouseStateManager" 
+        highlightedShapes="content.highlightedShapes"
+        selectedShape="content.selectedBrush"
+        draggedShapes="content.draggedShapes"}}
       </div>
-      
+
       Shapes
       <ul class="shapes">
         {{#each shape in content.shapes}}
@@ -46,7 +49,6 @@
           {{view Animator.ComparisonView leftBinding="shape" rightBinding="content.draggedShapes" viewName="draggedShapes"}}
           {{view Animator.ComparisonView leftBinding="shape" rightBinding="content.highlightedShapes" viewName="highlightedShapes"}}
           <button {{bindAttr class="view.draggedShapes.contains:selected view.highlightedShapes.contains:highlighted"}}>
-            {{shape}}
           {{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
           </button>
           {{/view}}

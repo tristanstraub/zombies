@@ -7,14 +7,19 @@ requirejs.config({
            ember: 'ember',
            path: 'path',
            zombie: 'zombie',
-           'tweenjs-ember-plugin': 'tweenjs-ember-plugin'
+           'tweenjs-ember-plugin': 'tweenjs-ember-plugin',
+           'underscore':'underscore-min'
          }
 });
 
 require(['handlebars'], function() {
-  require(['jquery', 'easeljs', 'tweenjs', 'ember', 'path', 'zombie', 'tweenjs-ember-plugin'], function() {
+  require(['jquery', 'easeljs', 'tweenjs', 'ember', 'path', 'zombie', 'tweenjs-ember-plugin','underscore'], function() {
     createjs.TweenEmberPlugin.install();
     var Z = function() { return Zombie.Object.create.apply(Zombie.Object, arguments); };
+    var P = function() { return Zombie.Properties.create.apply(Zombie.Properties, arguments); };
+
+    var first = function(a) { return a[0]; };
+    var second = function(a) { return a[1]; };
 
     Animator = Ember.Application.create({
 	    autoinit: false
@@ -37,10 +42,7 @@ require(['handlebars'], function() {
       pathPropertyBinding: Ember.Binding.oneWay('properties.path'),
       shapePropertiesBinding: Ember.Binding.oneWay('properties.shape'),
 
-      pathBinding: Ember.Binding.oneWay('pathProperty.path'),
-
-      xBinding: 'properties.shape.x',
-      yBinding: 'properties.shape.y'
+      pathBinding: Ember.Binding.oneWay('pathProperty.path')
 
       // xDidChange: Animator.addsPropertiesAndSet('x', 'parentShapeProperties.x', 'shapeProperties.x'),
       // yDidChange: Animator.addsPropertiesAndSet('y', 'parentShapeProperties.y', 'shapeProperties.y'),
@@ -150,10 +152,29 @@ require(['handlebars'], function() {
       var canvasView = event.context;
       
       var offset = canvasView.$().offset();
-      var shapes = canvasView.shapesAtPoint(event.clientX - offset.left, event.clientY - offset.top);
-      
-      if (shapes.length > 0) {
-        router.send('highlightShapes', shapes);
+      var shapesPoints = canvasView.shapesAtPoint(event.clientX - offset.left, event.clientY - offset.top);
+
+      if (shapesPoints.length > 0) {
+        var id = Ember.guidFor({});
+
+        var points = shapesPoints.map(function(data) { 
+          var x = get(data.shape, 'properties.shape.x');
+          var y = get(data.shape, 'properties.shape.y');
+
+          var points = data.points;
+
+          return points.map(function(point) {
+            return [point[0] + x, point[1] + y];
+          });
+        }).reduce(function(a,b) { 
+          b.forEach(function(point) {
+            a.pushObject(point);
+          })
+          return a;
+        }, []);
+
+        router.send('highlightPoints', canvasView, points);
+        router.send('highlightShapes', shapesPoints.mapProperty('shape'));
       }
     };
 
@@ -168,6 +189,7 @@ require(['handlebars'], function() {
 
           mouseMove: function(manager, event) {
             highlightShapes(manager, event);
+
           }
         }),
 
@@ -223,7 +245,7 @@ require(['handlebars'], function() {
             var canvasView = event.context;
 
             var offset = canvasView.$().offset();
-            var shapes = canvasView.shapesAtPoint(event.clientX - offset.left, event.clientY - offset.top);
+            var shapes = canvasView.shapesAtPoint(event.clientX - offset.left, event.clientY - offset.top).mapProperty('shape');
 
             if (shapes.length > 0) {
               router.send('draggingShapes', shapes);
@@ -237,7 +259,7 @@ require(['handlebars'], function() {
             var canvasView = event.context;
 
             var offset = canvasView.$().offset();
-            var shapes = canvasView.shapesAtPoint(event.clientX - offset.left, event.clientY - offset.top);
+            var shapes = canvasView.shapesAtPoint(event.clientX - offset.left, event.clientY - offset.top).mapProperty('shape');
             
             manager.transitionTo('up');
 
@@ -291,17 +313,14 @@ require(['handlebars'], function() {
         if (!get(this, 'shapes')) {
           set(this, 'shapes', []);
         }
-
-//        set(this, 'mouseStateManager', get(this, 'mouseStateManager').create());
       },
-
      
       shapesAtPoint: function(x, y) {
         return get(this, 'shapes').map(function(shape) {
           var w=20;
           var h=20;
           var points = shape.getContainedPoints(x-w/2,y-h/2,w,h);
-          return points.length > 0 ? shape : null;
+          return points.length > 0 ? { shape: shape, points: points} : null;
         }).filter(function(a) { return a; });
       },
 
@@ -324,7 +343,7 @@ require(['handlebars'], function() {
 
         set(this, 'bridge', bridge);
 
-        this.updateShapes();        
+//        this.updateShapes();        
 
         factory.createGameLoop().start();
 
@@ -333,7 +352,7 @@ require(['handlebars'], function() {
 
       addShape: function(shape) {
         get(this, 'shapes').addObject(shape);
-        this.updateShapes();
+//        this.updateShapes();
       },
 
       updateShapes: function() {
@@ -343,7 +362,7 @@ require(['handlebars'], function() {
             shape.addToStage(bridge);
           }, this);
         }
-      }
+      }.observes('shapes.@each')
     });
 
     Animator.ShapeView = Animator.CanvasView.extend({
@@ -390,9 +409,6 @@ require(['handlebars'], function() {
             }
           },
 
-          canvasMouseDown: function(router, event, shapesAtPoint, x, y) {
-          },
-
           draggingShapes: function(router, shapes) {
             set(this, 'context.draggedShapes', shapes.mapProperty('brush'));
           },
@@ -401,6 +417,46 @@ require(['handlebars'], function() {
             set(this, 'context.highlightedShapes', shapes.mapProperty('brush'));
           },
 
+          highlightPoints: function(manager, canvasView, points) {
+            // var hs = get(this, 'highlightedPoints');
+            // var ps = get(this, 'previousHighlightedPoints');
+
+            // // remove old points from canvas
+            // _.intersection(hs, ps).forEach(function(shape) {
+            //   shape.removeFromStage();
+            // });
+
+            // // add new points to canvas
+            // _.difference(hs, ps).forEach(function(shape) {
+            //   get(router, 'applicationController').
+            //     shape.addToStage();
+            // });
+
+            // set(this, 'previousHighlightedPoints', hs);
+            points.forEach(function(point) {
+              var pointShape = Zombie.Circle.create({
+                properties: P({
+                  shape: P({
+                    x: point[0], y: point[1]
+                  }),
+                  circle: P({
+                    radius: 2
+                  })
+                })
+              });
+
+//              console.log(get(pointShape, 'x'));
+
+              // set(pointShape, 'properties.shape.x', point[0]);
+              // set(pointShape, 'properties.shape.y', point[1]);
+
+              // set(pointShape, 'x', point[0]);
+              // set(pointShape, 'y', point[1]);
+
+              canvasView.addShape(pointShape);
+            });
+          }.observes('highlightedPoints.@each'),
+          
           canvasClicked: function(router, event, shapesAtPoint, x, y) {
             var canvas = event.context;
             var brush = get(this, 'context.selectedBrush');
@@ -432,7 +488,7 @@ require(['handlebars'], function() {
           context: null,
 
           connectOutlets: function(router) {
-            var brushProperties = Zombie.Properties.create({
+            var brushProperties = P({
               copyProperties: Zombie.copyProperties('path', 'shape', 'animations'),
 
               path: BoxPathTemplate.create({
@@ -441,7 +497,7 @@ require(['handlebars'], function() {
                 pathTemplate: 'M 0 0 L {{width}} 0 L 0 {{height}} L -{{width}} 0 L 0 -{{height}}'
               }).observes('width','height'),
               
-              shape: Zombie.Properties.create({
+              shape: P({
                 copyProperties: Zombie.copyProperties('x','y'),
                 x: 5,
                 y: 0
@@ -462,11 +518,52 @@ require(['handlebars'], function() {
             });
 
             var context = Z({
+              /**
+                 @property brushes
+                 @return {Object} the user created brushes
+              */
               brushes:[shape],
+
+              /**
+                 @property shapes
+                 @return {Object} the shapes active on the canvas
+              */
               shapes: [],
+
+              /**
+                 @property selectedBrush
+                 @return {Object} the selected brush or undefined
+              */              
               selectedBrush: null,
+
+              /**
+                 @property draggedShapes
+                 @return {Object} the shapes being dragged
+              */              
               draggedShapes: [],
+
+              /**
+                 @property highlightedShapes
+                 @return {Object} the shapes hovered over
+              */              
               highlightedShapes: [],
+
+              /**
+                 @property highlightedPoints
+                 @return {Object} the points hovered over
+              */              
+              highlightedPoints: [],
+
+              /**
+                 @property previousHighlightedPoints
+                 @return {Object} the previous points that were hovered over
+              */
+              previousHighlightedPoints: [],
+
+              /**
+                 @property canvasMouseStateManager
+                 @return {Object} the state manager for the mouse
+              */
               canvasMouseStateManager: MouseDragManager.create()
             });
 

@@ -46,6 +46,16 @@ Zombie.EaselBridge = Ember.Object.extend({
     graphics.setStrokeStyle(1);
     graphics.beginStroke("#113355");
     graphics.decodePath(this.shapeEncodePath(path));
+  },
+
+  shapeDrawCircle: function(circle) {
+    var radius = get(circle, 'radius');
+    var shape = get(circle, 'shape');
+    var graphics = shape.graphics;
+
+    graphics.setStrokeStyle(1);
+    graphics.beginStroke("#113355");
+    graphics.drawCircle(0,0,radius);
   }
 });
 
@@ -116,9 +126,7 @@ Zombie.Properties = Ember.Object.extend(Ember.Copyable, {
 Zombie.shapePropertySetter = Ember.computed(function(key, value, oldvalue) {
   if (arguments.length > 1) {
     var shape = get(this, 'shape');
-    if (shape) {
-      shape[key] = value;
-    }
+    shape[key] = value;
   }
 
   return value;
@@ -131,19 +139,21 @@ Zombie.NeedsProperties = Ember.Mixin.create({
 Zombie.Shape = Zombie.Object.extend(Ember.Copyable, Zombie.NeedsProperties, {
   id: function() { return Ember.guidFor(this); }.property(),
 
-  shape: null,
+  shape: function() {
+    return new createjs.Shape();
+  }.property(),
+
+  getContainedPoints: Ember.K,
 
   x: Zombie.shapePropertySetter,
   y: Zombie.shapePropertySetter,
   scaleX: Zombie.shapePropertySetter,
   scaleY: Zombie.shapePropertySetter,
 
-  draw: Ember.K,
+  xBinding: 'properties.shape.x',
+  yBinding: 'properties.shape.y',
 
-  init: function() {
-    this._super.apply(this, arguments);
-    set(this, 'shape', new createjs.Shape());
-  },
+  draw: Ember.K,
 
   createDelegate: function(deep) {
     return Ember.copy(this, deep);
@@ -183,12 +193,20 @@ Zombie.Shape = Zombie.Object.extend(Ember.Copyable, Zombie.NeedsProperties, {
   }  
 });
 
+Zombie.Circle = Zombie.Shape.extend(Ember.Copyable, {
+  radiusBinding: 'properties.circle.radius',
+
+  draw: function(bridge) {
+    bridge = bridge || get(this, 'bridge');
+
+    this.clear(bridge);
+    bridge.shapeDrawCircle(this);
+
+  }.observes('radius')
+});
+
 Zombie.Path = Zombie.Shape.extend(Ember.Copyable, {
   pathBinding: 'properties.path',
-
-  init: function() {
-    this._super.apply(this, arguments);
-  },
 
   getContainedPoints: function(x,y,w,h) {
     var self = this;
