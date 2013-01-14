@@ -186,8 +186,6 @@ Zombie.Shape = Zombie.Object.extend(Ember.Copyable, Zombie.NeedsProperties, {
     bridge.addShapeToStage(this);
   },
 
-  removeFromStage: Ember.K,
-
   clear: function(bridge) {
     (bridge || get(this, 'bridge')).clearShape(this);
   }  
