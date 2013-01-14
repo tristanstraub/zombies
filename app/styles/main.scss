@@ -1,0 +1,87 @@
+@import "compass_twitter_bootstrap";
+
+button {
+    @extend .btn;
+    &.selected { 
+        @extend .btn-info;
+    }
+}
+
+
+.brushes, .shapes {
+    .collection {
+        ul {
+            list-style: none;
+
+            .highlighted { 
+                @extend .btn-warning;
+            }
+
+            li {
+                float: left;
+            }
+        }
+    }
+}
+
+.canvas { 
+    &.pencil { cursor: crosshair; }
+    &.select { cursor: pointer; }
+    &.edit { cursor: crosshair; }
+}
+
+/* .header { */
+/*     @extend .container; */
+/*     .title { */
+/*         @extend .navbar; */
+/*     } */
+/* } */
+
+/* .content { */
+/*     @extend .container; */
+/* } */
+
+/* button { */
+/*     @extend .btn; */
+/* } */
+
+/* .tools, .brushes, .canvas, .shapes, .properties, .timeline { */
+/*     .selected { */
+/*         @extend .btn-success; */
+/*     } */
+/*     .highlighted { */
+/*         @extend .btn-warning; */
+/*     } */
+
+/*     .collection { */
+
+/*     } */
+/* } */
+
+
+/* .tools { */
+/*     button { */
+/*         @extend .btn; */
+/*         @extend .btn-primary; */
+/*     } */
+/* } */
+
+/* .tools, .brushes, shapes, .timeline { */
+/*     @include makeColumn(3); */
+
+/*     @extend .btn-toolbar; */
+/*     .collection { */
+/*         ul { */
+/*             @extend .btn-group; */
+/*         } */
+/*     } */
+/* } */
+
+/* .canvas, .properties, .timeline { */
+
+/* } */
+
+
+/* .tools, .brushes, .shapes, .properties { */
+
+/* } */
