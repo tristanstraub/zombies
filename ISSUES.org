@@ -1,0 +1,14 @@
+* BUGS
+** TODO context.tool: 'pencil' doesn't show correct cursor on startup.
+
+* FEATURES
+** TODO Feature: pencil tool
+
+  Scenario: draw polygon
+    Given that the pencil tool is selected
+    When I draw a triangle
+    Then a new shape should be shown
+
+
+
+
