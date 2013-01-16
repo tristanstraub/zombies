@@ -43,10 +43,10 @@
             {{view Animator.ComparisonView left="pencil" rightBinding="content.tool" viewName="isPencil"}}
             {{view Animator.ComparisonView left="brush" rightBinding="content.tool" viewName="isBrush"}}
 
-            <button {{action chooseSelectTool }} {{bindAttr class="view.isSelect.equal:selected"}}><i class="icon-hand-left"></i></button>
-            <button {{action chooseEditTool }} {{bindAttr class="view.isEdit.equal:selected"}}><i class="icon-edit"></i></button>
-            <button {{action choosePencilTool }} {{bindAttr class="view.isPencil.equal:selected"}}><i class="icon-pencil"></i></button>
-            <button {{action chooseBrushTool }} {{bindAttr class="view.isBrush.equal:selected"}}><i class="icon-tint"></i></button>
+            <button id="select-tool" {{action chooseSelectTool }} {{bindAttr class="view.isSelect.equal:selected"}}><i class="icon-hand-left"></i></button>
+            <button id="edit-tool" {{action chooseEditTool }} {{bindAttr class="view.isEdit.equal:selected"}}><i class="icon-edit"></i></button>
+            <button id="pencil-tool" {{action choosePencilTool }} {{bindAttr class="view.isPencil.equal:selected"}}><i class="icon-pencil"></i></button>
+            <button id="brush-tool" {{action chooseBrushTool }} {{bindAttr class="view.isBrush.equal:selected"}}><i class="icon-tint"></i></button>
           </div>
 
           <div class="brushes">
@@ -68,7 +68,7 @@
         </div>
 
         <div class="canvas span9">
-          {{view Animator.CanvasView toolBinding="content.tool" canvasWidth="640" canvasHeight="480" mouseStateManagerBinding="content.canvasMouseStateManager" 
+          {{view Animator.CanvasView classNames="main-canvas" toolBinding="content.tool" canvasWidth="640" canvasHeight="480" mouseStateManagerBinding="content.canvasMouseStateManager" 
           highlightedShapes="content.highlightedShapes"
           selectedShape="content.selectedBrush"
           draggedShapes="content.draggedShapes" viewName="mainCanvas"}}

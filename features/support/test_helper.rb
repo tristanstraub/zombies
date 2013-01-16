@@ -1,6 +1,6 @@
 module TestHelper
-  def visit_youtube
-    visit "http://www.youtube.com"
+  def visit_zombies
+    visit "http://localhost:3501"
   end
   
   def search_for_term(text)

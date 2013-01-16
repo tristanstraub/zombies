@@ -7,5 +7,5 @@ gem 'selenium-webdriver'
 gem 'rspec'
 gem 'rspec-expectations'
 gem 'capybara'
-
+gem 'compass'
 
