@@ -195,6 +195,49 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
         canvas.addShape(canvasDelegate);
         get(this, 'context.shapes').addObject(shapeDelegate);
       }
+    },
+
+    highlightShapesAndPoints: function(router, event) {
+      var router = event.targetObject;
+      var canvasView = event.context;
+      
+      var offset = canvasView.$().offset();
+      var px = event.pageX - offset.left;
+      var py = event.pageY - offset.top;
+      var shapesPoints = canvasView.shapesAtPoint(px, py);
+
+      var shapes = [];
+      var points = [];
+
+      if (shapesPoints.length > 0) {
+        var id = Ember.guidFor({});
+
+        points = shapesPoints.map(function(data) { 
+          var x = get(data.shape, 'properties.shape.x');
+          var y = get(data.shape, 'properties.shape.y');
+
+          var points = data.points;
+
+          return points.map(function(point) {
+            return [point[0] + x, point[1] + y];
+          });
+        }).reduce(function(a,b) { 
+          b.forEach(function(point) {
+            a.pushObject(point);
+          })
+          return a;
+        }, []);
+
+        shapes = shapesPoints.mapProperty('shape');
+      }
+
+      router.send('highlightShapes', canvasView, shapes);
+      router.send('highlightPoints', canvasView, points);
+    },
+
+    addShape: function(router, event) {
+      var shape = event.context;
+      get(this, 'context.shapes').addObject(shape);      
     }
   })
 });

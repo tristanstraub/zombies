@@ -3,7 +3,7 @@ define(['ember', 'canvas/mouse-state'], function(Ember, MouseState) {
   var get = Ember.get;
 
   return MouseState.extend({
-    down: MouseState.create({
+    down: MouseState.extend({
       mouseUp: function(manager, event) {
         var router = event.targetObject;
         var canvasView = event.context;
@@ -15,7 +15,7 @@ define(['ember', 'canvas/mouse-state'], function(Ember, MouseState) {
 
         router.send('canvasClicked', event, shapes, event.pageX - offset.left, event.pageY - offset.top);
 
-        highlightShapesAndPoints(manager, event);
+        router.send('highlightShapesAndPoints', event);
       }
     })
   });

@@ -6,7 +6,7 @@ define(['ember', 'zombie', 'canvas/mouse-state'], function(Ember, Zombie, MouseS
   var P = function() { return Zombie.Properties.create.apply(Zombie.Properties, arguments); };
 
   return MouseState.extend({    
-    down: MouseState.create({
+    down: MouseState.extend({
       setup: function(manager, event) {
         var canvasView = event.context;
 
@@ -18,6 +18,10 @@ define(['ember', 'zombie', 'canvas/mouse-state'], function(Ember, Zombie, MouseS
           properties: P({
             line: P({
               edge: [[cx,cy],[cx,cy]]
+            }),
+            shape: P({
+              x: 0,
+              y: 0
             })
           })
         });
@@ -42,7 +46,6 @@ define(['ember', 'zombie', 'canvas/mouse-state'], function(Ember, Zombie, MouseS
       mouseMove: function(manager, event) {
         var canvasView = event.context;
         var offset = canvasView.$().offset();
-        console.log(offset);
 
         var cx = (event.pageX - offset.left);
         var cy = (event.pageY - offset.top);
@@ -50,12 +53,13 @@ define(['ember', 'zombie', 'canvas/mouse-state'], function(Ember, Zombie, MouseS
         var edge = get(this, 'context.line.edge');
 
         edge.replace(1, 1, [[cx, cy]]);
-
-        console.log(edge);
       },
 
       mouseUp: function(manager, event) {
-        manager.transitionTo('tool.pencil');
+        var router = event.targetObject;
+
+        router.send('addShape', { context: get(this, 'context.line').createDelegate() });
+        manager.transitionTo('idle');
       }
     })
   });

@@ -1,54 +1,26 @@
-define(['ember', 'canvas/mouse-state', 'animator/mouse-state-manager/state.tool.edit', 'animator/mouse-state-manager/state.tool.pencil', 'animator/mouse-state-manager/state.tool.pencil', 'animator/mouse-state-manager/state.tool.pencil'], function(Ember, MouseState, StateToolEdit, StateToolPencil, StateToolSelect, StateToolBrush) {
+define(['ember', 
+        'canvas/mouse-state', 
+        'animator/mouse-state-manager/state.tool.edit', 
+        'animator/mouse-state-manager/state.tool.pencil', 
+        'animator/mouse-state-manager/state.tool.select', 
+        'animator/mouse-state-manager/state.tool.brush'], function(
+          Ember, 
+          MouseState, 
+          StateToolEdit, 
+          StateToolPencil, 
+          StateToolSelect, 
+          StateToolBrush) {
   var set = Ember.set;
   var get = Ember.get;
 
-  var highlightShapesAndPoints = function(manager, event) {
-    var router = event.targetObject;
-    var canvasView = event.context;
-    
-    var offset = canvasView.$().offset();
-    var px = event.pageX - offset.left;
-    var py = event.pageY - offset.top;
-    var shapesPoints = canvasView.shapesAtPoint(px, py);
-
-    var shapes = [];
-    var points = [];
-
-    if (shapesPoints.length > 0) {
-      var id = Ember.guidFor({});
-
-      points = shapesPoints.map(function(data) { 
-        var x = get(data.shape, 'properties.shape.x');
-        var y = get(data.shape, 'properties.shape.y');
-
-        var points = data.points;
-
-        return points.map(function(point) {
-          return [point[0] + x, point[1] + y];
-        });
-      }).reduce(function(a,b) { 
-        b.forEach(function(point) {
-          a.pushObject(point);
-        })
-        return a;
-      }, []);
-
-      shapes = shapesPoints.mapProperty('shape');
-    }
-
-    router.send('highlightShapes', canvasView, shapes);
-    router.send('highlightPoints', canvasView, points);
-  };
-
   var MouseStateManager = Ember.StateManager.extend({
-    //enableLogging: true,
-    initialState: 'up',
+//    enableLogging: true,
+    initialState: 'idle',
     states: {
-      up: MouseState.create({
-        enter: function() { console.log('up'); },
+      idle: MouseState.create({
         mouseDown: function(manager, event) {
-          console.log('mouse down');
-          highlightShapesAndPoints(manager, event);
+          var router = event.targetObject;
+          router.send('highlightShapesAndPoints', event);
 
           var canvasView = event.context;
           var tool = get(canvasView, 'tool');
@@ -64,7 +36,8 @@ define(['ember', 'canvas/mouse-state', 'animator/mouse-state-manager/state.tool.
         },
 
         mouseMove: function(manager, event) {
-          highlightShapesAndPoints(manager, event);
+          var router = event.targetObject;
+          router.send('highlightShapesAndPoints', event);
         }
       }),
 

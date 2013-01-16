@@ -3,6 +3,11 @@ define(['jquery', 'handlebars', 'easeljs', 'tweenjs', 'ember', 'path', 'tweenjs-
 
   var set = Ember.set, get = Ember.get;
 
+  var boxContainsPoint = function(x, y, w, h, x0, y0)  {
+    return (x <= x0 && x0 <= x + w && y <= y0 && y0 <= y + h);
+  };
+
+
   Zombie.EaselBridge = Ember.Object.extend({
     stage: null,
 
@@ -68,7 +73,6 @@ define(['jquery', 'handlebars', 'easeljs', 'tweenjs', 'ember', 'path', 'tweenjs-
       graphics.beginStroke("#113355");
       var a = edge.objectAt(0);
       var b = edge.objectAt(1);
-      console.log(a,b);
       graphics.moveTo(a.objectAt(0), a.objectAt(1));
       graphics.lineTo(b.objectAt(0), b.objectAt(1));
     }
@@ -233,7 +237,18 @@ define(['jquery', 'handlebars', 'easeljs', 'tweenjs', 'ember', 'path', 'tweenjs-
 
     edgeChanged: function() {
       this.draw(get(this, 'bridge'));
-    }.observes('edge.@each')
+    }.observes('edge.@each'),
+
+    getContainedPoints: function(x,y,w,h) {
+      var cx = get(this, 'x');
+      var cy = get(this, 'y');
+
+      return get(this, 'edge').filter(function(point) {
+        return boxContainsPoint(x,y,w,h, cx + point.objectAt(0), cy + point.objectAt(1));
+      }).map(function(point, index) {
+          return { point: point, index: index };
+      });
+    }
   });
 
   // Zombie.PolyLine = Zombie.Shape.extend({
@@ -268,17 +283,13 @@ define(['jquery', 'handlebars', 'easeljs', 'tweenjs', 'ember', 'path', 'tweenjs-
           point = [lastpoint[0] + dx, lastpoint[1] + dy];
         }
 
-        if (self.boxContainsPoint(x,y,w,h, point[0] + get(self, 'x'), point[1] + get(self, 'y'))) {
+        if (boxContainsPoint(x,y,w,h, point[0] + get(self, 'x'), point[1] + get(self, 'y'))) {
           points.push({ point: point, index: index });
         }
         lastpoint = point;
       };
       this.traversePath(traverseSegment);
       return points;
-    },
-
-    boxContainsPoint: function(x, y, w, h, x0, y0)  {
-      return (x <= x0 && x0 <= x + w && y <= y0 && y0 <= y + h);
     },
 
     draw: function(bridge) {

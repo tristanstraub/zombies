@@ -7,6 +7,7 @@ define(['ember','zombie', 'animator'], function(ember, zombie, Animator) {
       var manager = get(this, 'mouseStateManager');
       event.context = this;
       event.targetObject = get(this, 'controller.target');
+
       manager && manager.send(name, event);
     };
   };
