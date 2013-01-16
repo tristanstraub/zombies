@@ -11,6 +11,7 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
     context: null,
 
     setup: function() {
+      console.log('setup');
       var context = Z({
         /**
            Tools: select, pencil, edit, brush
@@ -103,6 +104,7 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
       // var shape = GraphShape.create({
       //   properties: brushProperties 
       // });
+
 
       get(router, 'applicationController').connectOutlet('main', 'workspace', get(this, 'context'));
     },

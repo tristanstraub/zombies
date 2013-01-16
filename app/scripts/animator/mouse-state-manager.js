@@ -45,7 +45,9 @@ define(['ember', 'canvas/mouse-state', 'animator/mouse-state-manager/state.tool.
     initialState: 'up',
     states: {
       up: MouseState.create({
+        enter: function() { console.log('up'); },
         mouseDown: function(manager, event) {
+          console.log('mouse down');
           highlightShapesAndPoints(manager, event);
 
           var canvasView = event.context;

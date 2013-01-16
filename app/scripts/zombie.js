@@ -57,6 +57,20 @@ define(['jquery', 'handlebars', 'easeljs', 'tweenjs', 'ember', 'path', 'tweenjs-
       graphics.setStrokeStyle(1);
       graphics.beginStroke("#113355");
       graphics.drawCircle(0,0,radius);
+    },
+
+    shapeDrawLine: function(line) {
+      var edge = get(line, 'edge');
+      var shape = get(line, 'shape');
+      var graphics = shape.graphics;
+
+      graphics.setStrokeStyle(1);
+      graphics.beginStroke("#113355");
+      var a = edge.objectAt(0);
+      var b = edge.objectAt(1);
+      console.log(a,b);
+      graphics.moveTo(a.objectAt(0), a.objectAt(1));
+      graphics.lineTo(b.objectAt(0), b.objectAt(1));
     }
   });
 
@@ -194,7 +208,7 @@ define(['jquery', 'handlebars', 'easeljs', 'tweenjs', 'ember', 'path', 'tweenjs-
     }  
   });
 
-  Zombie.Circle = Zombie.Shape.extend(Ember.Copyable, {
+  Zombie.Circle = Zombie.Shape.extend({
     radiusBinding: 'properties.circle.radius',
 
     draw: function(bridge) {
@@ -206,7 +220,35 @@ define(['jquery', 'handlebars', 'easeljs', 'tweenjs', 'ember', 'path', 'tweenjs-
     }.observes('radius')
   });
 
-  Zombie.Path = Zombie.Shape.extend(Ember.Copyable, {
+  Zombie.Line = Zombie.Shape.extend({
+    edgeBinding: 'properties.line.edge',
+
+    draw: function(bridge) {
+      bridge = bridge || get(this, 'bridge');
+      if (get(this, 'edge')) {
+        this.clear(bridge);
+        bridge.shapeDrawLine(this);
+      }
+    },
+
+    edgeChanged: function() {
+      this.draw(get(this, 'bridge'));
+    }.observes('edge.@each')
+  });
+
+  // Zombie.PolyLine = Zombie.Shape.extend({
+  //   pointsBinding: 'properties.polyline.points',
+
+  //   draw: function(bridge) {
+  //     bridge = bridge || get(this, 'bridge');
+  //     if (get(this, 'path')) {
+  //       this.clear(bridge);
+  //       ((this);
+  //     }
+  //   },
+  // });
+
+  Zombie.Path = Zombie.Shape.extend({
     pathBinding: 'properties.path',
 
     getContainedPoints: function(x,y,w,h) {
@@ -233,10 +275,6 @@ define(['jquery', 'handlebars', 'easeljs', 'tweenjs', 'ember', 'path', 'tweenjs-
       };
       this.traversePath(traverseSegment);
       return points;
-    },
-
-    wedge: function(a, b) {
-      return a[0]*b[1]-a[1]*b[0];
     },
 
     boxContainsPoint: function(x, y, w, h, x0, y0)  {
