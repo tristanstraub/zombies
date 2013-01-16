@@ -8,6 +8,105 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
   return Ember.Route.extend({
     route: '/',
 
+    context: null,
+
+    setup: function() {
+      var context = Z({
+        /**
+           Tools: select, pencil, edit
+
+           @property tool
+           @return {Object} the canvas tool
+        */
+        tool: 'pencil',
+
+        /**
+           @property brushes
+           @return {Object} the user created brushes
+        */
+        brushes:[],
+
+        /**
+           @property shapes
+           @return {Object} the shapes active on the canvas
+        */
+        shapes: [],
+
+        /**
+           @property selectedBrush
+           @return {Object} the selected brush or undefined
+        */              
+        selectedBrush: null,
+
+        /**
+           @property draggedShapes
+           @return {Object} the shapes being dragged
+        */              
+        draggedShapes: [],
+
+        /**
+           @property highlightedShapes
+           @return {Object} the shapes hovered over
+        */              
+        highlightedShapes: [],
+
+        /**
+           @property highlightedPoints
+           @return {Object} the points hovered over
+        */              
+        highlightedPoints: [],
+
+        /**
+           @property previousHighlightedPoints
+           @return {Object} the previous points that were hovered over
+        */
+        previousHighlightedPoints: [],
+
+        /**
+           @property canvasMouseStateManager
+           @return {Object} the state manager for the mouse
+        */
+        canvasMouseStateManager: MouseStateManager.create()
+      });
+
+      set(this, 'context', context);
+
+      this._super.apply(this, arguments);
+    },
+
+    connectOutlets: function(router) {
+      // var brushProperties = P({
+      //   copyProperties: Zombie.copyProperties('path', 'shape', 'animations'),
+
+      //   path: BoxPathTemplate.create({
+      //     width: 100,
+      //     height: 100,
+      //     pathTemplate: 'M 0 0 L {{width}} 0 L 0 {{height}} L -{{width}} 0 L 0 -{{height}}'
+      //   }).observes('width','height'),
+        
+      //   shape: P({
+      //     copyProperties: Zombie.copyProperties('x','y'),
+      //     x: 5,
+      //     y: 0
+      //   }),
+        
+      //   animations: function() {
+      //     return [{ name: 'move',
+      //               animate: function(part) {
+      //                 createjs.Tween.get(part.properties.shape,{loop:true})
+		  //                   .to({'x':300,'y':300},10000);
+      //               }
+      //             }];
+      //   }.property()
+      // });
+
+      // var shape = GraphShape.create({
+      //   properties: brushProperties 
+      // });
+
+      get(router, 'applicationController').connectOutlet('main', 'workspace', get(this, 'context'));
+    },
+
     animate: function(router, event) {
       var part = event.contexts[0];
       var animation = event.contexts[1];
@@ -94,112 +193,6 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
         canvas.addShape(canvasDelegate);
         get(this, 'context.shapes').addObject(shapeDelegate);
       }
-    },
-
-    canvasDragEvent: function(router, event) {
-      // dragstart   : 'dragStart',
-      // drag        : 'drag',
-      // dragenter   : 'dragEnter',
-      // dragleave   : 'dragLeave',
-      // dragover    : 'dragOver',
-      // drop        : 'drop',
-      // dragend     : 'dragEnd'
-    },
-
-    context: null,
-
-    connectOutlets: function(router) {
-      var brushProperties = P({
-        copyProperties: Zombie.copyProperties('path', 'shape', 'animations'),
-
-        path: BoxPathTemplate.create({
-          width: 100,
-          height: 100,
-          pathTemplate: 'M 0 0 L {{width}} 0 L 0 {{height}} L -{{width}} 0 L 0 -{{height}}'
-        }).observes('width','height'),
-        
-        shape: P({
-          copyProperties: Zombie.copyProperties('x','y'),
-          x: 5,
-          y: 0
-        }),
-        
-        animations: function() {
-          return [{ name: 'move',
-                    animate: function(part) {
-                      createjs.Tween.get(part.properties.shape,{loop:true})
-		                    .to({'x':300,'y':300},10000);
-                    }
-                  }];
-        }.property()
-      });
-
-      var shape = GraphShape.create({
-        properties: brushProperties 
-      });
-
-      var context = Z({
-        /**
-           Tools: select, pencil, edit
-
-           @property tool
-           @return {Object} the canvas tool
-        */
-        tool: 'brush',
-
-        /**
-           @property brushes
-           @return {Object} the user created brushes
-        */
-        brushes:[shape],
-
-        /**
-           @property shapes
-           @return {Object} the shapes active on the canvas
-        */
-        shapes: [],
-
-        /**
-           @property selectedBrush
-           @return {Object} the selected brush or undefined
-        */              
-        selectedBrush: null,
-
-        /**
-           @property draggedShapes
-           @return {Object} the shapes being dragged
-        */              
-        draggedShapes: [],
-
-        /**
-           @property highlightedShapes
-           @return {Object} the shapes hovered over
-        */              
-        highlightedShapes: [],
-
-        /**
-           @property highlightedPoints
-           @return {Object} the points hovered over
-        */              
-        highlightedPoints: [],
-
-        /**
-           @property previousHighlightedPoints
-           @return {Object} the previous points that were hovered over
-        */
-        previousHighlightedPoints: [],
-
-        /**
-           @property canvasMouseStateManager
-           @return {Object} the state manager for the mouse
-        */
-        canvasMouseStateManager: MouseStateManager.create()
-      });
-
-      set(context, 'selectedBrush', get(context, 'brushes').objectAt(0));
-
-      set(this, 'context', context);
-      get(router, 'applicationController').connectOutlet('main', 'workspace', context);
     }
   })
 });
