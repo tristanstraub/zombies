@@ -7,7 +7,9 @@ define(['ember', 'canvas/mouse-state', 'animator/mouse-state-manager/state.tool.
     var canvasView = event.context;
     
     var offset = canvasView.$().offset();
-    var shapesPoints = canvasView.shapesAtPoint(event.pageX - offset.left, event.pageY - offset.top);
+    var px = event.pageX - offset.left;
+    var py = event.pageY - offset.top;
+    var shapesPoints = canvasView.shapesAtPoint(px, py);
 
     var shapes = [];
     var points = [];
