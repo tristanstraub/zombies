@@ -289,4 +289,6 @@ define(['jquery', 'handlebars', 'easeljs', 'tweenjs', 'ember', 'path', 'tweenjs-
       this.notifyPropertyChange('pathTemplate');    
     }.observes(name);
   };
+
+  return Zombie;
 });

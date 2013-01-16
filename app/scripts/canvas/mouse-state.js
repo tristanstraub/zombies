@@ -1,4 +1,7 @@
 define(['ember'], function() {
+  var set = Ember.set;
+  var get = Ember.get;
+
   var stateProperty = Ember.computed(function(key) {
     var parent = get(this, 'parentState');
     if (parent) {
