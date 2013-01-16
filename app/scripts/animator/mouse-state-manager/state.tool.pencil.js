@@ -5,6 +5,20 @@ define(['ember', 'zombie', 'canvas/mouse-state'], function(Ember, Zombie, MouseS
   var Z = function() { return Zombie.Object.create.apply(Zombie.Object, arguments); };
   var P = function() { return Zombie.Properties.create.apply(Zombie.Properties, arguments); };
 
+  var getFirstNearestLineEndPoint = function(canvasView, cx, cy) {
+    var shapesPoints = canvasView.shapesAtPoint(cx, cy);
+
+    if (shapesPoints.length > 0) {
+      var lines = shapesPoints.filter(function(shapePoint) {
+        return Zombie.Line.detectInstance(shapePoint.shape);
+      });
+      if (lines.length > 0) {
+        line = lines.objectAt(0);
+        return shapesPoints.objectAt(0).points.objectAt(0);
+      }
+    }
+  };
+
   return MouseState.extend({    
     down: MouseState.extend({
       setup: function(manager, event) {
@@ -14,10 +28,15 @@ define(['ember', 'zombie', 'canvas/mouse-state'], function(Ember, Zombie, MouseS
         var cx = event.pageX - offset.left;
         var cy = event.pageY - offset.top;
 
+        var startPoint = getFirstNearestLineEndPoint(canvasView, cx, cy);
+        if (!startPoint) {
+          startPoint = [cx,cy];
+        }
+
         var line = Zombie.Line.create({
           properties: P({
             line: P({
-              edge: [[cx,cy],[cx,cy]]
+              edge: [Ember.copy(startPoint),[cx,cy]]
             }),
             shape: P({
               x: 0,
@@ -44,6 +63,9 @@ define(['ember', 'zombie', 'canvas/mouse-state'], function(Ember, Zombie, MouseS
       },
 
       mouseMove: function(manager, event) {
+        var router = event.targetObject;
+        router.send('highlightShapesAndPoints', event);
+
         var canvasView = event.context;
         var offset = canvasView.$().offset();
 
@@ -57,6 +79,20 @@ define(['ember', 'zombie', 'canvas/mouse-state'], function(Ember, Zombie, MouseS
 
       mouseUp: function(manager, event) {
         var router = event.targetObject;
+        var canvasView = event.context;
+        var offset = canvasView.$().offset();
+
+        var cx = (event.pageX - offset.left);
+        var cy = (event.pageY - offset.top);
+
+        var endPoint = getFirstNearestLineEndPoint(canvasView, cx, cy);
+        if (!endPoint) {
+          endPoint = [cx,cy];
+        }
+
+        var edge = get(this, 'context.line.edge');
+
+        edge.replace(1, 1, [Ember.copy(endPoint)]);
 
         router.send('addShape', { context: get(this, 'context.line').createDelegate() });
         manager.transitionTo('idle');

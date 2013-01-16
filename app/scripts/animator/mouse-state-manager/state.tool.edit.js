@@ -11,10 +11,8 @@ define(['ember', 'canvas/mouse-state'], function(Ember, MouseState) {
         var offset = canvasView.$().offset();
         var cx = event.pageX - offset.left;
         var cy = event.pageY - offset.top;
-        var shapesPoints = canvasView.shapesAtPoint(cx, cy);              
+        var shapesPoints = canvasView.shapesAtPoint(cx, cy);
         
-        shapesPoints
-
         if (shapes.length > 0) {
           manager.transitionTo('dragging', { event: event, shapesPoints: shapesPoints, x: cx, y: cy });
         }

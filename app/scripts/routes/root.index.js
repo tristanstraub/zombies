@@ -11,7 +11,6 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
     context: null,
 
     setup: function() {
-      console.log('setup');
       var context = Z({
         /**
            Tools: select, pencil, edit, brush
