@@ -13,7 +13,7 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
     setup: function() {
       var context = Z({
         /**
-           Tools: select, pencil, edit
+           Tools: select, pencil, edit, brush
 
            @property tool
            @return {Object} the canvas tool

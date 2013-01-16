@@ -1,19 +1,20 @@
-define(['canvas/mouse-state'], function(MouseState) {
-  return MouseState.create({
+define(['ember', 'canvas/mouse-state'], function(Ember, MouseState) {
+  var set = Ember.set;
+  var get = Ember.get;
+
+  return MouseState.extend({
     down: MouseState.create({
       setup: function(manager, event) {
         var router = event.targetObject;
         var canvasView = event.context;
 
         var offset = canvasView.$().offset();
-        var cx = event.pageX - offset.left;
-        var cy = event.pageY - offset.top;
-        var shapesPoints = canvasView.shapesAtPoint(cx, cy);              
-        
-        shapesPoints
+        var shapes = canvasView.shapesAtPoint(event.pageX - offset.left, event.pageY - offset.top).mapProperty('shape');
 
         if (shapes.length > 0) {
-          manager.transitionTo('dragging', { event: event, shapesPoints: shapesPoints, x: cx, y: cy });
+          router.send('draggingShapes', canvasView, shapes);
+
+          manager.transitionTo('dragging', { event: event, shapes: shapes, x: event.pageX - offset.left, y: event.pageY - offset.top });
         }
 
         highlightShapesAndPoints(manager, event);
@@ -23,14 +24,14 @@ define(['canvas/mouse-state'], function(MouseState) {
       }
     }),
     dragging: MouseState.create({
-      shapesPoints: null,
+      shapes: null,
       startx: null,
       starty: null,
 
       coords: null,
 
       setup: function(manager, context) {
-        set(this, 'shapesPoints', context.shapesPoints);
+        set(this, 'shapes', context.shapes);
         set(this, 'startx', context.x);
         set(this, 'starty', context.y);
 
@@ -69,7 +70,6 @@ define(['canvas/mouse-state'], function(MouseState) {
 
         highlightShapesAndPoints(manager, event);
       }
-    }),
-
-  })
+    })
+  });
 });
