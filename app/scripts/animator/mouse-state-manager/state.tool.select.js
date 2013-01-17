@@ -1,4 +1,4 @@
-define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.tool.select.dragging'], function(Ember, MouseState, StateToolSelectDragging) {
+define(['ember', 'animator/mouse-state-manager/mouse-state', 'animator/mouse-state-manager/state.tool.select.dragging'], function(Ember, MouseState, StateToolSelectDragging) {
     var set = Ember.set;
     var get = Ember.get;
 

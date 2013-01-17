@@ -1,9 +1,5 @@
-define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template', 'animator/mouse-state-manager'], function(ember, Zombie, GraphShape, BoxPathTemplate, MouseStateManager) {
-  var set = Ember.set;
-  var get = Ember.get;
-
-  var Z = function() { return Zombie.Object.create.apply(Zombie.Object, arguments); };
-  var P = function() { return Zombie.Properties.create.apply(Zombie.Properties, arguments); };
+define(['ember', 'zombie/zombie', 'animator/graph-shape', 'animator/box-path-template', 'animator/mouse-state-manager/mouse-state-manager'], function(Ember, Zombie, GraphShape, BoxPathTemplate, MouseStateManager) {
+  var set = Ember.set, get = Ember.get, Z = Zombie.Z, P = Zombie.P;
 
   return Ember.Route.extend({
     route: '/',
@@ -13,7 +9,7 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
     setup: function() {
       var context = Z({
         /**
-           Tools: select, pencil, edit, brush
+           Tools: select, pencil, edit, brush, boxselect
 
            @property tool
            @return {Object} the canvas tool
@@ -51,36 +47,6 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
     },
 
     connectOutlets: function(router) {
-      // var brushProperties = P({
-      //   copyProperties: Zombie.copyProperties('path', 'shape', 'animations'),
-
-      //   path: BoxPathTemplate.create({
-      //     width: 100,
-      //     height: 100,
-      //     pathTemplate: 'M 0 0 L {{width}} 0 L 0 {{height}} L -{{width}} 0 L 0 -{{height}}'
-      //   }).observes('width','height'),
-        
-      //   shape: P({
-      //     copyProperties: Zombie.copyProperties('x','y'),
-      //     x: 5,
-      //     y: 0
-      //   }),
-        
-      //   animations: function() {
-      //     return [{ name: 'move',
-      //               animate: function(part) {
-      //                 createjs.Tween.get(part.properties.shape,{loop:true})
-		  //                   .to({'x':300,'y':300},10000);
-      //               }
-      //             }];
-      //   }.property()
-      // });
-
-      // var shape = GraphShape.create({
-      //   properties: brushProperties 
-      // });
-
-
       get(router, 'applicationController').connectOutlet('main', 'workspace', get(this, 'context'));
     },
 
@@ -123,12 +89,6 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
 
     choosePencilTool: function(router) {
       this.chooseTool('pencil');
-    },
-
-
-    // addShape: function(router, event) {
-    //   var shape = event.context;
-    //   get(this, 'context.shapes').addObject(shape);      
-    // }
+    }
   })
 });

@@ -1,6 +1,5 @@
-define(['ember','zombie', 'animator/animator'], function(ember, zombie, Animator) {
-    var set = Ember.set;
-    var get = Ember.get;
+define(['ember', 'zombie/zombie'], function(Ember, Zombie) {
+    var set = Ember.set, get = Ember.get;
 
     var mouseMethod = function(name) {
         return function(event) {
@@ -15,7 +14,7 @@ define(['ember','zombie', 'animator/animator'], function(ember, zombie, Animator
         };
     };
 
-    Animator.CanvasView = Ember.View.extend({
+    return Ember.View.extend({
         attributeBindings: ['width','height','style'],
         tagName: 'canvas',
 
@@ -122,6 +121,4 @@ define(['ember','zombie', 'animator/animator'], function(ember, zombie, Animator
             shape.removeFromStage(get(this, 'bridge'));
         }
     });
-
-    return Animator.CanvasView;
 });

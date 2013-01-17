@@ -1,4 +1,4 @@
-define(['ember','zombie','animator/animator'], function(ember, Zombie, Animator) {
+define(['ember', 'zombie/path'], function(Ember, ZombiePath) {
   // Animator.addsPropertiesAndSet = function(coords, a, b) {
   //   return function() {
   //     var parent = get(this, a) || 0;
@@ -8,7 +8,7 @@ define(['ember','zombie','animator/animator'], function(ember, Zombie, Animator)
   //   }.observes(a, b);
   // };
 
-  Animator.GraphShape = Zombie.Path.extend({
+  return ZombiePath.extend({
     parentBinding: 'properties.parent',
 
     parentShapePropertiesBinding: Ember.Binding.oneWay('parent.properties.shape'),
@@ -18,6 +18,4 @@ define(['ember','zombie','animator/animator'], function(ember, Zombie, Animator)
 
     pathBinding: Ember.Binding.oneWay('pathProperty.path')
   });
-
-  return Animator.GraphShape;
 });

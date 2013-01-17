@@ -1,5 +1,4 @@
-define(['ember','animator/animator'], function(ember, Animator) {
-  Animator.WorkspaceController = Ember.Controller.extend({});
-  return Animator.WorkspaceController;
+define(['ember'], function(Ember) {
+  return Ember.Controller.extend({});
 });
 

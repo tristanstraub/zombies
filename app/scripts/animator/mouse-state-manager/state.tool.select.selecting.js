@@ -1,9 +1,5 @@
-define(['ember', 'animator/mouse-state'], function(Ember, MouseState) {
-    var set = Ember.set;
-    var get = Ember.get;
-
-    var Z = Zombie.Z;
-    var P = Zombie.P;
+define(['ember', 'zombie/zombie', 'animator/mouse-state-manager/mouse-state'], function(Ember, Zombie, MouseState) {
+    var set = Ember.set, get = Ember.get, Z = Zombie.Z, P = Zombie.P;
 
     return MouseState.extend({
         context: null,
@@ -86,10 +82,10 @@ define(['ember', 'animator/mouse-state'], function(Ember, MouseState) {
             var height = get(this, 'context.rectangle.height');
             var shapesPoints = canvasView.getContainedShapesPoints(x,y,width,height);
 
+            this.highlights(manager, event);
             rectangle.removeFromStage();
             set(this, 'context.rectangle', null);
 
-            this.highlights(manager, event);
             manager.transitionTo('idle');
         }
     });

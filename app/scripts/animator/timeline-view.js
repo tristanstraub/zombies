@@ -1,7 +1,6 @@
-define(['ember','animator/animator'], function(ember, Animator) {
-  Animator.TimelineView = Ember.View.extend({
+define(['ember'], function(Ember) {
+  return Ember.View.extend({
     layout: Ember.Handlebars.compile('{{yield}}'),
 	  templateName: 'timeline'
   });
-  return Animator.TimelineView;
 });

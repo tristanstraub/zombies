@@ -1,8 +1,7 @@
-define(['ember', 'animator/animator', 'animator/canvas-view'], function(ember, Animator, CanvasView) {
-  var set = Ember.set;
-  var get = Ember.get;
+define(['ember', 'animator/canvas-view'], function(Ember, CanvasView) {
+  var set = Ember.set, get = Ember.get;
 
-  Animator.ShapeView = CanvasView.extend({
+  return CanvasView.extend({
     shape: null,
     didInsertElement: function() {
       this._super.apply(this, arguments);

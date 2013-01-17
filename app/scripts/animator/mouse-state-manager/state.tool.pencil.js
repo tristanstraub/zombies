@@ -1,9 +1,5 @@
-define(['ember', 'zombie', 'animator/mouse-state'], function(Ember, Zombie, MouseState) {
-    var set = Ember.set;
-    var get = Ember.get;
-
-    var Z = Zombie.Z;
-    var P = Zombie.P;
+define(['ember', 'zombie/zombie', 'animator/mouse-state-manager/mouse-state'], function(Ember, Zombie, MouseState) {
+    var set = Ember.set, get = Ember.get, Z = Zombie.Z, P = Zombie.P;
 
     var distance = function(a,b) {
         var dx = a.objectAt(0)-b.objectAt(0);

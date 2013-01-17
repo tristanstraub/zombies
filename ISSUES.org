@@ -5,20 +5,148 @@
 
 You can only see shapes that are penciled in the top left corner of the canvas.
 
+** TODO drag after boxselect leaves highlighted points
 * FEATURES
-** TODO Feature: pencil tool
+** DONE Feature: pencil tool
 
   Scenario: draw polygon
     Given that the pencil tool is selected
     When I draw a triangle
-    Then a new shape should be shown
+    Then a new shape should be sh
 
-
-    
+** DONE highlight points on boxselect
 ** TODO snap to point on drag
-** TODO highlight points on boxselect
     
 * QUESTIONS
 
 Do properties really need the excessive nesting?
 Should properties<->shape be oneway or twoway?
+
+*JUNK
+
+      // var brushProperties = P({
+      //   copyProperties: Zombie.copyProperties('path', 'shape', 'animations'),
+
+      //   path: BoxPathTemplate.create({
+      //     width: 100,
+      //     height: 100,
+      //     pathTemplate: 'M 0 0 L {{width}} 0 L 0 {{height}} L -{{width}} 0 L 0 -{{height}}'
+      //   }).observes('width','height'),
+        
+      //   shape: P({
+      //     copyProperties: Zombie.copyProperties('x','y'),
+      //     x: 5,
+      //     y: 0
+      //   }),
+        
+      //   animations: function() {
+      //     return [{ name: 'move',
+      //               animate: function(part) {
+      //                 createjs.Tween.get(part.properties.shape,{loop:true})
+		  //                   .to({'x':300,'y':300},10000);
+      //               }
+      //             }];
+      //   }.property()
+      // });
+
+      // var shape = GraphShape.create({
+      //   properties: brushProperties 
+      // });
+
+
+    // boxContainsLine: function(x, y, w, h, lx0, ly0, lx1, ly1)  {
+    //   // 1) poly on one side, or 2) one of two points inside poly 3) other of two points inside poly
+    
+    //   var sgn = function(x) { return x < 0 ? -1 : 1 };
+
+    //   var x0=x, x1=x+w, x2=x+w, x3=x;
+    //   var y0=y, y1=y,   y2=y+h, y2=y+h;
+
+    //   // 2) lx0, ly0
+    //   var s = sgn(wedge([lx1-lx0,ly1-lx0],[x-lx0, y-ly0]))
+    //     +sgn(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, h+y-ly0]))
+    //     +sgn(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, y-ly0]))
+    //     +sgn(wedge([lx1-lx0,ly1-lx0],[x-lx0, h+y-ly0]));
+    //   if (Math.abs(s) == 4)
+    //     return true;
+
+    //   // 3) lx1, ly1
+    //   var s = sgn(wedge([x1-x0,y1-y0],[x-lx0, y-ly0]))
+    //     +sgn(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, h+y-ly0]))
+    //     +sgn(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, y-ly0]))
+    //     +sgn(wedge([lx1-lx0,ly1-lx0],[x-lx0, h+y-ly0]));
+    //   if (Math.abs(s) == 4)
+    //     return true;
+
+    //   // 1)
+    //   var s = (wedge([lx1-lx0,ly1-lx0],[x-lx0, y-ly0]) < 0 ? -1 : 1)
+    //     +(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, h+y-ly0]) < 0 ? -1 : 1)
+    //     +(wedge([lx1-lx0,ly1-lx0],[w+x-lx0, y-ly0]) < 0 ? -1 : 1)
+    //     +(wedge([lx1-lx0,ly1-lx0],[x-lx0, h+y-ly0]) < 0 ? -1 : 1);
+    //   return (Math.abs(s) !== 4);
+    // },
+
+  // var robot = Z({
+  //   head: Z({
+  //     properties: Z({
+  //       path: BoxPathTemplate.create({
+  //         width: 100,
+  //         height: 100,
+  //         pathTemplate: 'M 0 0 L {{width}} 0 L 0 {{height}} L -{{width}} 0 L 0 -{{height}}'
+  //       }).observes('width','height'),
+
+  //       shape: Z({ 
+  //         x: 5, 
+  //         y: 0 
+  //       }),
+
+  //       animations: function() {
+  //         return [{ name: 'move', 
+  //                   animate: function(part) {
+  //                     createjs.Tween.get(part.properties.shape,{loop:true})
+	//                       .to({'x':300,'y':300},10000);
+  //                   }
+  //                 }];
+  //       }.property()
+  //     })
+  //   }),
+
+  //   body: Z({
+  //     properties: Z({
+  //       path: BoxPathTemplate.create({
+  //         width: 200,
+  //         height: 200,
+  //         pathTemplate: 'M 0 0 L {{width}} 0 L 0 {{height}} L -{{width}} 0 L 0 -{{height}}'
+  //       }).observes('width','height'),
+  
+  //       shape: Z({ 
+  //         x: 0, 
+  //         y: 10 
+  //       })
+  //     })
+  //   }),
+
+  //   properties: Z({
+  //     shape: Z({
+  //       x: 0, 
+  //       y: 0
+  //     })
+  //   })
+  // });
+
+  // robot.reopen({
+  //   head: robot.head.reopen({
+  //     shape: GraphShape.create({ 
+  //       properties: robot.head.properties
+  //     })
+  //   }),
+
+  //   body: robot.body.reopen({
+  //     shape: GraphShape.create({ 
+  //       properties: robot.body.properties
+  //     })
+  //   })
+  // });
+
+
+
