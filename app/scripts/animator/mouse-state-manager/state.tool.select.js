@@ -17,8 +17,6 @@ define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.too
                 if (shapes.length > 0) {
                     manager.transitionTo('dragging', { event: event, shapes: shapes, x: cx, y: cy });
                 }
-
-                manager.send('highlightShapesAndPoints', event);
             },
             mouseUp: function(manager, event) {
                 manager.transitionTo('idle');

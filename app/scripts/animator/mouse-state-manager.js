@@ -1,4 +1,4 @@
-define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.tool.edit', 'animator/mouse-state-manager/state.tool.pencil', 'animator/mouse-state-manager/state.tool.select', 'animator/mouse-state-manager/state.tool.boxselect', 'animator/mouse-state-manager/state.tool.brush'], function(Ember, MouseState, StateToolEdit, StateToolPencil, StateToolSelect, StateToolBoxSelect, StateToolBrush) {
+define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.tool.edit', 'animator/mouse-state-manager/state.tool.pencil', 'animator/mouse-state-manager/state.tool.select', 'animator/mouse-state-manager/state.tool.boxselect', 'animator/mouse-state-manager/state.tool.brush', 'animator/highlighter'], function(Ember, MouseState, StateToolEdit, StateToolPencil, StateToolSelect, StateToolBoxSelect, StateToolBrush, Highlighter) {
 
     var set = Ember.set;
     var get = Ember.get;
@@ -10,17 +10,22 @@ define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.too
         //    enableLogging: true,
         initialState: 'idle',
 
-        highlightedShapes: [],
+        highlightedShapes: null,
 
-        highlightedPoints: [],
-        
-        previousHighlightedPoints: [],
+        rectangleHighlighter: null,
+        cursorHighlighter: null,
+
+        init: function() {
+            this._super.apply(this, arguments);
+
+            set(this, 'highlightedShapes', []);
+            set(this, 'rectangleHighlighter', Highlighter.create());
+            set(this, 'cursorHighlighter', Highlighter.create());
+        },
 
         states: {
             idle: MouseState.create({
                 mouseDown: function(manager, event) {
-                    manager.send('highlightShapesAndPoints', event);
-
                     var canvasView = event.context;
                     var tool = get(canvasView, 'tool');
                     if (tool === 'pencil') {
@@ -37,7 +42,7 @@ define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.too
                 },
 
                 mouseMove: function(manager, event) {
-                    manager.send('highlightShapesAndPoints', event);
+
                 }
             }),
 
@@ -71,9 +76,7 @@ define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.too
                         return [point[0], point[1]];
                     });
                 }).reduce(function(a,b) { 
-                    b.forEach(function(point) {
-                        a.pushObject(point);
-                    })
+                    a.pushObjects(b);
                     return a;
                 }, []);
 
@@ -81,36 +84,21 @@ define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.too
             }
 
             this.highlightShapes(canvasView, shapes);
-            this.highlightPoints(canvasView, points);
+            get(this, 'cursorHighlighter').highlightPoints(canvasView, points);
         },
 
         highlightShapes: function(canvasView, shapes) {
             set(this, 'highlightedShapes', shapes.mapProperty('brush'));
         },
 
-        highlightPoints: function(canvasView, points) {
-            var ps = get(this, 'previousHighlightedPoints');
-            ps.forEach(function(shape) {
-                canvasView.removeShape(shape);
-            });
-
-            pointShapes = points.map(function(point) {
-                var shape = Zombie.Circle.create({
-                    properties: P({
-                        shape: P({
-                            x: point[0], y: point[1]
-                        }),
-                        circle: P({
-                            radius: 2
-                        })
-                    })
-                });
-
-                canvasView.addShapeToStage(shape);
-                return shape;
-            });
-
-            set(this, 'previousHighlightedPoints', pointShapes);
+        highlightPointsInRectangle: function(manager, canvasView, x, y, width, height) {
+            var points = canvasView.getContainedShapesPoints(x,y,width,height)
+                .mapProperty('points')
+                .reduce(function(a,b) {
+                    a.pushObject(b);
+                    return b;
+                }, []);
+            get(this, 'rectangleHighlighter').highlightPoints(canvasView, points);
         }
     });
 

@@ -8,7 +8,10 @@ define(['ember','zombie', 'animator/animator'], function(ember, zombie, Animator
             event.context = this;
             event.targetObject = get(this, 'controller.target');
 
-            manager && manager.send(name, event);
+            if (manager) {
+                manager.send(name, event);
+                manager.send(name + '_after', event);
+            }
         };
     };
 

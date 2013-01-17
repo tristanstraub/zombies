@@ -13,8 +13,6 @@ define(['ember', 'animator/mouse-state'], function(Ember, MouseState) {
                 manager.transitionTo('up');
 
                 this.canvasClicked(event, shapes, event.pageX - offset.left, event.pageY - offset.top);
-
-                manager.send('highlightShapesAndPoints', event);
             },
 
             canvasClicked: function(event, shapesAtPoint, x, y) {

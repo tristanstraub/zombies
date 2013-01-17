@@ -29,6 +29,19 @@ define(['ember', 'animator/mouse-state'], function(Ember, MouseState) {
 
             var canvasView = event.context;
             canvasView.addShapeToStage(rectangle);
+
+            this.highlights(manager, event);
+        },
+
+        highlights: function(manager, event) {
+            var canvasView = event.context;
+
+            var x = get(this, 'context.rectangle.x');
+            var y = get(this, 'context.rectangle.y');
+            var width = get(this, 'context.rectangle.width');
+            var height = get(this, 'context.rectangle.height');
+            
+            manager.send('highlightPointsInRectangle', canvasView, x, y, width, height);
         },
 
         setCorners: function(event) {
@@ -58,8 +71,7 @@ define(['ember', 'animator/mouse-state'], function(Ember, MouseState) {
 
         mouseMove: function(manager, event) {
             this.setCorners(event);
-
-            manager.send('highlightShapesAndPoints', event);
+            this.highlights(manager, event);
         },
 
         mouseUp: function(manager, event) {
@@ -75,7 +87,9 @@ define(['ember', 'animator/mouse-state'], function(Ember, MouseState) {
             var shapesPoints = canvasView.getContainedShapesPoints(x,y,width,height);
 
             rectangle.removeFromStage();
-           
+            set(this, 'context.rectangle', null);
+
+            this.highlights(manager, event);
             manager.transitionTo('idle');
         }
     });

@@ -12,12 +12,9 @@ define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.too
                 var cx = event.pageX - offset.left;
                 var cy = event.pageY - offset.top;
 
-					      var shapes = canvasView.shapesAtPoint(cx, cy).mapProperty('shape');
+				var shapes = canvasView.shapesAtPoint(cx, cy).mapProperty('shape');
                 
-
                 manager.transitionTo('selecting', { event: event, cx: cx, cy: cy});
-
-                manager.send('highlightShapesAndPoints', event);
             },
             mouseUp: function(manager, event) {
                 manager.transitionTo('idle');

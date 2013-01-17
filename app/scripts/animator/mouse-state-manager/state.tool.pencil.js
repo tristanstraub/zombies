@@ -92,8 +92,6 @@ define(['ember', 'zombie', 'animator/mouse-state'], function(Ember, Zombie, Mous
                 var edge = get(this, 'context.line.edge');
 
                 edge.replace(1, 1, [[offsets.cx, offsets.cy]]);
-
-                manager.send('highlightShapesAndPoints', event);
             },
 
             mouseUp: function(manager, event) {
@@ -110,7 +108,6 @@ define(['ember', 'zombie', 'animator/mouse-state'], function(Ember, Zombie, Mous
 
                 canvasView.addShape(get(this, 'context.line'));
 
-                manager.send('highlightShapesAndPoints', event);
                 manager.transitionTo('idle');
             }
         })
