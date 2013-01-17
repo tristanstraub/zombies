@@ -1,20 +1,45 @@
-define(['ember', 'zombie', 'canvas/mouse-state'], function(Ember, Zombie, MouseState) {
+define(['ember', 'zombie', 'animator/mouse-state'], function(Ember, Zombie, MouseState) {
   var set = Ember.set;
   var get = Ember.get;
 
   var Z = function() { return Zombie.Object.create.apply(Zombie.Object, arguments); };
   var P = function() { return Zombie.Properties.create.apply(Zombie.Properties, arguments); };
 
-  var getFirstNearestLineEndPoint = function(canvasView, cx, cy) {
+  var distance = function(a,b) {
+    var dx = a.objectAt(0)-b.objectAt(0);
+    var dy = a.objectAt(1)-b.objectAt(1);
+    return Math.sqrt(dx*dx+dy*dy);
+  };
+
+  var getFirstNearestLineEndPoint = function(canvasView, cx, cy, shape) {
     var shapesPoints = canvasView.shapesAtPoint(cx, cy);
 
     if (shapesPoints.length > 0) {
       var lines = shapesPoints.filter(function(shapePoint) {
         return Zombie.Line.detectInstance(shapePoint.shape);
       });
+
       if (lines.length > 0) {
-        line = lines.objectAt(0);
-        return shapesPoints.objectAt(0).points.objectAt(0);
+        var point = shapesPoints.filter(function(sh) { 
+          return (sh.shape !== shape);
+        }).mapProperty('points').reduce(function(a,b) {
+          a.pushObjects(b);
+          return a;
+        }, []).reduce(function(a, b) {
+          if (!a)
+            return b;
+
+          var d1 = distance(a, [cx, cy]);
+          var d2 = distance(b, [cx, cy]);
+ 
+          if (d1 <= d2) {
+            return a;
+          } else {
+            return b;
+          }
+        }, null);
+
+        return point;
       }
     }
   };
@@ -85,12 +110,11 @@ define(['ember', 'zombie', 'canvas/mouse-state'], function(Ember, Zombie, MouseS
         var cx = (event.pageX - offset.left);
         var cy = (event.pageY - offset.top);
 
-        var endPoint = getFirstNearestLineEndPoint(canvasView, cx, cy);
+        var edge = get(this, 'context.line.edge');
+        var endPoint = getFirstNearestLineEndPoint(canvasView, cx, cy, get(this, 'context.line'));
         if (!endPoint) {
           endPoint = [cx,cy];
         }
-
-        var edge = get(this, 'context.line.edge');
 
         edge.replace(1, 1, [Ember.copy(endPoint)]);
 

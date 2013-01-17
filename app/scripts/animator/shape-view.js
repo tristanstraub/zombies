@@ -1,4 +1,4 @@
-define(['ember', 'animator', 'canvas/canvas-view'], function(ember, Animator, CanvasView) {
+define(['ember', 'animator/animator', 'animator/canvas-view'], function(ember, Animator, CanvasView) {
   var set = Ember.set;
   var get = Ember.get;
 

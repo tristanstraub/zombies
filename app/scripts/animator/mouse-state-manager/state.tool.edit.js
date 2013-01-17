@@ -1,4 +1,4 @@
-define(['ember', 'canvas/mouse-state'], function(Ember, MouseState) {
+define(['ember', 'animator/mouse-state'], function(Ember, MouseState) {
   var set = Ember.set;
   var get = Ember.get;
 

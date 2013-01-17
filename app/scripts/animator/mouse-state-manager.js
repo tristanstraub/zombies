@@ -1,5 +1,5 @@
 define(['ember', 
-        'canvas/mouse-state', 
+        'animator/mouse-state', 
         'animator/mouse-state-manager/state.tool.edit', 
         'animator/mouse-state-manager/state.tool.pencil', 
         'animator/mouse-state-manager/state.tool.select', 

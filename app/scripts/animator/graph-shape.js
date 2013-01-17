@@ -1,4 +1,4 @@
-define(['ember','zombie','animator'], function(ember, Zombie, Animator) {
+define(['ember','zombie','animator/animator'], function(ember, Zombie, Animator) {
   // Animator.addsPropertiesAndSet = function(coords, a, b) {
   //   return function() {
   //     var parent = get(this, a) || 0;

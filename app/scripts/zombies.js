@@ -1,11 +1,11 @@
 define(['zombie', 
-        'animator', 
+        'animator/animator', 
         'animator/application-controller',
         'animator/application-view',
         'animator/timeline-view',
         'animator/workspace-controller',
         'animator/workspace-view',
-        'canvas/canvas-view', 
+        'animator/canvas-view', 
         'animator/shape-view', 
         'animator/comparison-view', 
         'routes/root.index'], function(

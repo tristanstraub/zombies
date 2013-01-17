@@ -1,4 +1,4 @@
-define(['ember','zombie', 'animator'], function(ember, zombie, Animator) {
+define(['ember','zombie', 'animator/animator'], function(ember, zombie, Animator) {
   var set = Ember.set;
   var get = Ember.get;
 
