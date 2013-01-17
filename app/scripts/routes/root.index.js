@@ -39,30 +39,6 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
         selectedBrush: null,
 
         /**
-           @property draggedShapes
-           @return {Object} the shapes being dragged
-        */              
-        draggedShapes: [],
-
-        /**
-           @property highlightedShapes
-           @return {Object} the shapes hovered over
-        */              
-        highlightedShapes: [],
-
-        /**
-           @property highlightedPoints
-           @return {Object} the points hovered over
-        */              
-        highlightedPoints: [],
-
-        /**
-           @property previousHighlightedPoints
-           @return {Object} the previous points that were hovered over
-        */
-        previousHighlightedPoints: [],
-
-        /**
            @property canvasMouseStateManager
            @return {Object} the state manager for the mouse
         */
@@ -125,41 +101,12 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
       }
     },
 
-    draggingShapes: function(router, canvasView, shapes) {
-      set(this, 'context.draggedShapes', shapes.mapProperty('brush'));
-    },
-
-    highlightShapes: function(router, canvasView, shapes) {
-      set(this, 'context.highlightedShapes', shapes.mapProperty('brush'));
-    },
-
-    highlightPoints: function(manager, canvasView, points) {
-      var ps = get(this, 'context.previousHighlightedPoints');
-      ps.forEach(function(shape) {
-        canvasView.removeShape(shape);
-      });
-
-      pointShapes = points.map(function(point) {
-        var shape = Zombie.Circle.create({
-          properties: P({
-            shape: P({
-              x: point[0], y: point[1]
-            }),
-            circle: P({
-              radius: 2
-            })
-          })
-        });
-
-        canvasView.addShape(shape);
-        return shape;
-      });
-
-      set(this, 'context.previousHighlightedPoints', pointShapes);
-    },
-    
     chooseTool: function(tool) {
       set(this, 'context.tool', tool);
+    },
+
+    chooseBoxSelectTool: function(router) {
+      this.chooseTool('boxselect');
     },
 
     chooseSelectTool: function(router) {
@@ -178,65 +125,10 @@ define(['ember', 'zombie', 'animator/graph-shape', 'animator/box-path-template',
       this.chooseTool('pencil');
     },
 
-    canvasClicked: function(router, event, shapesAtPoint, x, y) {
-      var canvas = event.context;
-      var brush = get(this, 'context.selectedBrush');
 
-      if (brush) {
-        var canvasDelegate = brush.createDelegate(true);
-        var shapeDelegate = brush.createDelegate(true);
-        
-        set(canvasDelegate, 'brush', shapeDelegate);
-
-        set(canvasDelegate, 'properties.shape.x', x);
-        set(canvasDelegate, 'properties.shape.y', y);
-
-        canvas.addShape(canvasDelegate);
-        get(this, 'context.shapes').addObject(shapeDelegate);
-      }
-    },
-
-    highlightShapesAndPoints: function(router, event) {
-      var router = event.targetObject;
-      var canvasView = event.context;
-      
-      var offset = canvasView.$().offset();
-      var px = event.pageX - offset.left;
-      var py = event.pageY - offset.top;
-      var shapesPoints = canvasView.shapesAtPoint(px, py);
-
-      var shapes = [];
-      var points = [];
-
-      if (shapesPoints.length > 0) {
-        var id = Ember.guidFor({});
-
-        points = shapesPoints.map(function(data) { 
-          var x = get(data.shape, 'properties.shape.x');
-          var y = get(data.shape, 'properties.shape.y');
-
-          var points = data.points;
-
-          return points.map(function(point) {
-            return [point[0] + x, point[1] + y];
-          });
-        }).reduce(function(a,b) { 
-          b.forEach(function(point) {
-            a.pushObject(point);
-          })
-          return a;
-        }, []);
-
-        shapes = shapesPoints.mapProperty('shape');
-      }
-
-      router.send('highlightShapes', canvasView, shapes);
-      router.send('highlightPoints', canvasView, points);
-    },
-
-    addShape: function(router, event) {
-      var shape = event.context;
-      get(this, 'context.shapes').addObject(shape);      
-    }
+    // addShape: function(router, event) {
+    //   var shape = event.context;
+    //   get(this, 'context.shapes').addObject(shape);      
+    // }
   })
 });

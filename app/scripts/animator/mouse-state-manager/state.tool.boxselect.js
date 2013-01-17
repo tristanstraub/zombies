@@ -1,4 +1,4 @@
-define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.tool.select.dragging'], function(Ember, MouseState, StateToolSelectDragging) {
+define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.tool.select.selecting'], function(Ember, MouseState, StateToolSelectSelecting) {
     var set = Ember.set;
     var get = Ember.get;
 
@@ -14,9 +14,8 @@ define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.too
 
 					      var shapes = canvasView.shapesAtPoint(cx, cy).mapProperty('shape');
                 
-                if (shapes.length > 0) {
-                    manager.transitionTo('dragging', { event: event, shapes: shapes, x: cx, y: cy });
-                }
+
+                manager.transitionTo('selecting', { event: event, cx: cx, cy: cy});
 
                 manager.send('highlightShapesAndPoints', event);
             },
@@ -24,6 +23,6 @@ define(['ember', 'animator/mouse-state', 'animator/mouse-state-manager/state.too
                 manager.transitionTo('idle');
             }
         }),
-        dragging: StateToolSelectDragging
+        selecting: StateToolSelectSelecting
     });
 });

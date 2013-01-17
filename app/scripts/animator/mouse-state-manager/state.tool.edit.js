@@ -5,7 +5,6 @@ define(['ember', 'animator/mouse-state'], function(Ember, MouseState) {
   return MouseState.extend({
     down: MouseState.extend({
       setup: function(manager, event) {
-        var router = event.targetObject;
         var canvasView = event.context;
 
         var offset = canvasView.$().offset();
@@ -17,10 +16,11 @@ define(['ember', 'animator/mouse-state'], function(Ember, MouseState) {
           manager.transitionTo('dragging', { event: event, shapesPoints: shapesPoints, x: cx, y: cy });
         }
 
-        router.send('highlightShapesAndPoints', event);
+        manager.send('highlightShapesAndPoints', event);
       },
-      mouseUp: function(router, event) {
-        router.transitionTo('up');
+
+      mouseUp: function(manager, event) {
+        manager.transitionTo('idle');
       }
     }),
     dragging: MouseState.extend({
@@ -58,22 +58,17 @@ define(['ember', 'animator/mouse-state'], function(Ember, MouseState) {
         });
 
         var router = event.targetObject;
-        router.send('highlightShapesAndPoints', event);
+        manager.send('highlightShapesAndPoints', event);
       },
 
       mouseUp: function(manager, event) {
         var router = event.targetObject;
         var canvasView = event.context;
 
-        router.send('draggingShapes', canvasView, []);
+        manager.send('highlightShapesAndPoints', event);
 
-        manager.transitionTo('up');
-
-        router.send('highlightShapesAndPoints', event);
+        manager.transitionTo('idle');
       }
     }),
-
   });
-
-
 });

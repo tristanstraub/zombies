@@ -6,7 +6,7 @@ define(['ember', 'animator/animator', 'animator/canvas-view'], function(ember, A
     shape: null,
     didInsertElement: function() {
       this._super.apply(this, arguments);
-      this.addShape(get(this, 'shape'));
+      this.addShape(get(this, 'shape').createDelegate());
     }
   });
 });

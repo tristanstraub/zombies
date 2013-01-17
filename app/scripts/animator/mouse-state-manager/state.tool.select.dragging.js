@@ -36,19 +36,14 @@ define(['ember', 'animator/mouse-state'], function(Ember, MouseState) {
         set(shape, 'properties.shape.y', newY);
       });
 
-      var router = event.targetObject;
-      router.send('highlightShapesAndPoints', event);
+      manager.send('highlightShapesAndPoints', event);
     },
 
     mouseUp: function(manager, event) {
-      var router = event.targetObject;
       var canvasView = event.context;
 
-      router.send('draggingShapes', canvasView, []);
-
+      manager.send('highlightShapesAndPoints', event);
       manager.transitionTo('idle');
-
-      router.send('highlightShapesAndPoints', event);
     }
   });
 });

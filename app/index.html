@@ -39,10 +39,12 @@
           <h4>Tools</h4>
           <div class="collection">
             {{view Animator.ComparisonView left="select" rightBinding="content.tool" viewName="isSelect"}}
+            {{view Animator.ComparisonView left="boxselect" rightBinding="content.tool" viewName="isBoxSelect"}}
             {{view Animator.ComparisonView left="edit" rightBinding="content.tool" viewName="isEdit"}}
             {{view Animator.ComparisonView left="pencil" rightBinding="content.tool" viewName="isPencil"}}
             {{view Animator.ComparisonView left="brush" rightBinding="content.tool" viewName="isBrush"}}
 
+            <button id="box-select-tool" {{action chooseBoxSelectTool }} {{bindAttr class="view.isBoxSelect.equal:selected"}}><i class="icon-retweet"></i></button>
             <button id="select-tool" {{action chooseSelectTool }} {{bindAttr class="view.isSelect.equal:selected"}}><i class="icon-hand-left"></i></button>
             <button id="edit-tool" {{action chooseEditTool }} {{bindAttr class="view.isEdit.equal:selected"}}><i class="icon-edit"></i></button>
             <button id="pencil-tool" {{action choosePencilTool }} {{bindAttr class="view.isPencil.equal:selected"}}><i class="icon-pencil"></i></button>
@@ -55,11 +57,10 @@
               <ul>
                 {{#each shape in content.brushes}}
                 <li>
-                  {{#view Animator.ComparisonView leftBinding="content.selectedBrush" rightBinding="shape"}}
-                  <button {{action selectBrush shape}} {{bindAttr class="view.equal:selected"}}>
+                  {{view Animator.ComparisonView leftBinding="content.selectedBrush" rightBinding="shape" viewName="selectBrush"}}
+                  <button {{action selectBrush shape}} {{bindAttr class="view.selectedBrush.equal:selected"}}>
                     {{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
                   </button>
-                  {{/view}}
                 </li>
                 {{/each}}
               </ul>
@@ -69,9 +70,7 @@
 
         <div class="canvas span9">
           {{view Animator.CanvasView classNames="main-canvas" toolBinding="content.tool" canvasWidth="640" canvasHeight="480" mouseStateManagerBinding="content.canvasMouseStateManager" 
-          highlightedShapes="content.highlightedShapes"
-          selectedShape="content.selectedBrush"
-          draggedShapes="content.draggedShapes" viewName="mainCanvas"}}
+          shapesBinding="content.shapes" viewName="mainCanvas"}}
         </div>
       </div>
 
@@ -90,9 +89,7 @@
               {{#each shape in content.shapes}}
               <li>
                 {{#view}}
-                {{view Animator.ComparisonView leftBinding="shape" rightBinding="content.draggedShapes" viewName="draggedShapes"}}
-                {{view Animator.ComparisonView leftBinding="shape" rightBinding="content.highlightedShapes" viewName="highlightedShapes"}}
-                <button {{bindAttr class="view.draggedShapes.contains:selected view.highlightedShapes.contains:highlighted"}}>
+                <button>
                   {{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
                 </button>
                 {{/view}}

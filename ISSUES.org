@@ -1,3 +1,4 @@
+
 * BUGS
 ** TODO context.tool: 'pencil' doesn't show correct cursor on startup.
 ** TODO penciled shapes must be scaled in ShapeView so they are seen. 
@@ -13,5 +14,11 @@ You can only see shapes that are penciled in the top left corner of the canvas.
     Then a new shape should be shown
 
 
+    
+** TODO snap to point on drag
+** TODO highlight points on boxselect
+    
+* QUESTIONS
 
-
+Do properties really need the excessive nesting?
+Should properties<->shape be oneway or twoway?
