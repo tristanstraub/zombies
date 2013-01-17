@@ -6,6 +6,7 @@
 You can only see shapes that are penciled in the top left corner of the canvas.
 
 ** TODO drag after boxselect leaves highlighted points
+** TODO when grouping, make sure grouping again doesn't break things or split things
 * FEATURES
 ** DONE Feature: pencil tool
 

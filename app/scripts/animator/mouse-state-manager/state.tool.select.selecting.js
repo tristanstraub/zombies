@@ -86,6 +86,17 @@ define(['ember', 'zombie/zombie', 'animator/mouse-state-manager/mouse-state'], f
             rectangle.removeFromStage();
             set(this, 'context.rectangle', null);
 
+            if (shapesPoints.length > 1) {
+                var shapes = shapesPoints.mapProperty('shape');
+                shapes.forEach(function(shape) {
+                    canvasView.removeShape(shape);
+                });
+
+                canvasView.addShape(Zombie.Group.create({
+                    shapes: shapes 
+                }));
+            }
+
             manager.transitionTo('idle');
         }
     });

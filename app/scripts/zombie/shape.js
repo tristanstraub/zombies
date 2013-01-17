@@ -1,4 +1,4 @@
-define(['ember', 'zombie/object'], function(Ember, ZombieObject) {
+define(['ember', 'zombie/object', 'zombie/coreshape'], function(Ember, ZombieObject, CoreShape) {
     var set = Ember.set, get = Ember.get;
 
     var shapePropertySetter = Ember.computed(function(key, value, oldvalue) {
@@ -10,17 +10,13 @@ define(['ember', 'zombie/object'], function(Ember, ZombieObject) {
         return value;
     });
 
-    return ZombieObject.extend(Ember.Copyable, {
+    return CoreShape.extend({
         id: function() { return Ember.guidFor(this); }.property(),
         properties: null,
 
         shape: function() {
             return new createjs.Shape();
         }.property(),
-
-        getContainedPoints: function() {
-            return [];
-        },
 
         x: shapePropertySetter,
         y: shapePropertySetter,
