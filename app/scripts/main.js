@@ -19,7 +19,8 @@ require.config({
         },
 
         'zombie/tweenjs-ember-plugin': {
-            deps: ['tweenjs']
+            deps: ['tweenjs'],
+            exports: 'createjs.TweenEmberPlugin'
         }
     },
 

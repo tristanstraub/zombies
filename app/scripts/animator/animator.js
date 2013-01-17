@@ -1,18 +1,14 @@
-define(['easeljs', 'ember', 'animator/application-controller', 'animator/application-view', 'animator/timeline-view', 'animator/workspace-controller', 'animator/workspace-view', 'animator/canvas-view', 'animator/shape-view', 'animator/comparison-view', 'animator/route.root.index', 'zombie/tweenjs-ember-plugin'], function(
-    createjs,
-    Ember,
-    ApplicationController,
-    ApplicationView,
-    TimelineView, 
-    WorkspaceController, 
-    WorkspaceView,
-    CanvasView, 
-    ShapeView,
-    ComparisonView,
-    RouteRootIndex, 
-    TweenEmberPlugin) { 
+define(['easeljs', 'ember', 
+        'animator/application-controller', 'animator/application-view', 
+        'animator/timeline-view', 'animator/workspace-controller', 
+        'animator/workspace-view', 'animator/canvas-view', 
+        'animator/shape-view', 'animator/comparison-view', 
+        'animator/route.root.index', 'zombie/tweenjs-ember-plugin'], function(
+    createjs, Ember, ApplicationController, ApplicationView,
+    TimelineView, WorkspaceController, WorkspaceView, CanvasView, 
+    ShapeView, ComparisonView, RouteRootIndex, TweenEmberPlugin) { 
 
-    createjs.TweenEmberPlugin.install();
+    TweenEmberPlugin.install();
 
     Animator = Ember.Application.create({
 	    autoinit: false,
