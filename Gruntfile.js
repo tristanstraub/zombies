@@ -80,7 +80,8 @@ module.exports = function( grunt ) {
     lint: {
       files: [
         'Gruntfile.js',
-        'app/scripts/**/*.js',
+        'app/scripts/livingdead/**/*.js',
+        'app/scripts/reanimator/**/*.js',
         'spec/**/*.js'
       ]
     },
@@ -185,6 +186,10 @@ module.exports = function( grunt ) {
 
     cucumber: {
       executable: "cucumber"
+    },
+
+    qunit: {
+	  files: ['test/**/*.html']
     }
   });
 
@@ -192,4 +197,7 @@ module.exports = function( grunt ) {
 
   // Alias the `test` task to run the `mocha` task instead
   grunt.registerTask('test', 'server:phantom mocha');
+
+//  grunt.registerTask('default', 'lint qunit');
+  grunt.registerTask('default', 'qunit');
 };

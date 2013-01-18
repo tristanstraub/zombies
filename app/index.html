@@ -38,11 +38,11 @@
         <div class="tools span3">
           <h4>Tools</h4>
           <div class="collection">
-            {{view Animator.ComparisonView left="select" rightBinding="content.tool" viewName="isSelect"}}
-            {{view Animator.ComparisonView left="boxselect" rightBinding="content.tool" viewName="isBoxSelect"}}
-            {{view Animator.ComparisonView left="edit" rightBinding="content.tool" viewName="isEdit"}}
-            {{view Animator.ComparisonView left="pencil" rightBinding="content.tool" viewName="isPencil"}}
-            {{view Animator.ComparisonView left="brush" rightBinding="content.tool" viewName="isBrush"}}
+            {{view Reanimator.ComparisonView left="select" rightBinding="content.tool" viewName="isSelect"}}
+            {{view Reanimator.ComparisonView left="boxselect" rightBinding="content.tool" viewName="isBoxSelect"}}
+            {{view Reanimator.ComparisonView left="edit" rightBinding="content.tool" viewName="isEdit"}}
+            {{view Reanimator.ComparisonView left="pencil" rightBinding="content.tool" viewName="isPencil"}}
+            {{view Reanimator.ComparisonView left="brush" rightBinding="content.tool" viewName="isBrush"}}
 
             <button id="box-select-tool" {{action chooseBoxSelectTool }} {{bindAttr class="view.isBoxSelect.equal:selected"}}><i class="icon-retweet"></i></button>
             <button id="select-tool" {{action chooseSelectTool }} {{bindAttr class="view.isSelect.equal:selected"}}><i class="icon-hand-left"></i></button>
@@ -57,9 +57,9 @@
               <ul>
                 {{#each shape in content.brushes}}
                 <li>
-                  {{view Animator.ComparisonView leftBinding="content.selectedBrush" rightBinding="shape" viewName="selectBrush"}}
+                  {{view Reanimator.ComparisonView leftBinding="content.selectedBrush" rightBinding="shape" viewName="selectBrush"}}
                   <button {{action selectBrush shape}} {{bindAttr class="view.selectedBrush.equal:selected"}}>
-                    {{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
+                    {{view Reanimator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
                   </button>
                 </li>
                 {{/each}}
@@ -69,7 +69,7 @@
         </div>
 
         <div class="canvas span9">
-          {{view Animator.CanvasView id="main-canvas" toolBinding="content.tool" canvasWidth="640" canvasHeight="480" mouseStateManagerBinding="content.canvasMouseStateManager" 
+          {{view Reanimator.CanvasView id="main-canvas" toolBinding="content.tool" canvasWidth="640" canvasHeight="480" mouseStateManagerBinding="content.canvasMouseStateManager" 
           shapesBinding="content.shapes" viewName="mainCanvas"}}
         </div>
       </div>
@@ -77,7 +77,7 @@
       <div class="row">
         <div class="timeline offset3 span9">
           <h4>Timeline</h4>
-          {{view Animator.TimelineView}}
+          {{view Reanimator.TimelineView}}
         </div>
       </div>
 
@@ -90,7 +90,7 @@
               <li>
                 {{#view}}
                 <button>
-                  {{view Animator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
+                  {{view Reanimator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
                 </button>
                 {{/view}}
               </li>

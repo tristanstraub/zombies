@@ -18,7 +18,7 @@ require.config({
             exports: 'createjs'
         },
 
-        'zombie/tweenjs-ember-plugin': {
+        'livingdead/tweenjs-ember-plugin': {
             deps: ['tweenjs'],
             exports: 'createjs.TweenEmberPlugin'
         }
@@ -36,6 +36,6 @@ require.config({
     }
 });
 
-require(['animator/animator', 'test-helper'], function(Animator, TestHelper) {
+require(['reanimator/reanimator', 'test-helper'], function(Reanimator, TestHelper) {
   window.testHelper = TestHelper.create();
 });
