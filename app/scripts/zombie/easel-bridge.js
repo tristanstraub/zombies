@@ -20,6 +20,7 @@ define(['easeljs', 'ember'], function(createjs, Ember) {
 
         addShapeToStage: function(shape) {
             var stage = get(this, 'stage');
+
             stage.addChild(get(shape, 'shape'));
         },
 

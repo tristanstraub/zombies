@@ -1,47 +1,62 @@
 define(['ember', 'zombie/object', 'zombie/coreshape'], function(Ember, ZombieObject, CoreShape) {
     var set = Ember.set, get = Ember.get;
 
-    var shapePropertySetter = Ember.computed(function(key, value, oldvalue) {
-        if (arguments.length > 1) {
-            var shape = get(this, 'shape');
-            shape[key] = value;
-        }
+    var shapePropertyAdderSetter = function(name) {
+        return Ember.computed(function(key, value, oldvalue) {
+            if (arguments.length > 1) {
+                var parentValue = get(this, name) || 0;
 
-        return value;
-    });
+                var shape = get(this, 'shape');
+                shape[key] = value + parentValue;
+            }
+
+            return value;
+        }).property();
+    };
+
+    var shapePropertyMultSetter = function(name) {
+        return Ember.computed(function(key, value, oldvalue) {
+            if (arguments.length > 1) {
+                var parentValue = get(this, name) || 1;
+
+                var shape = get(this, 'shape');
+                shape[key] = value * parentValue;
+            }
+
+            return value;
+        }).property(name);
+    };
 
     return CoreShape.extend({
         id: function() { return Ember.guidFor(this); }.property(),
-        properties: null,
+        parent: null,
+
+        didParentChange: function() {
+            console.log(get(this, 'parent.x'), get(this, 'parent.y'));
+        }.observes('parent.x','parent.y'),
 
         shape: function() {
             return new createjs.Shape();
         }.property(),
 
-        x: shapePropertySetter,
-        y: shapePropertySetter,
-        scaleX: shapePropertySetter,
-        scaleY: shapePropertySetter,
+        x: shapePropertyAdderSetter('parent.x'),
+        y: shapePropertyAdderSetter('parent.y'),
+        scaleX: shapePropertyMultSetter('parent.scaleX'),
+        scaleY: shapePropertyMultSetter('parent.scaleY'),
 
-        xBinding: 'properties.shape.x',
-        yBinding: 'properties.shape.y',
+        init: function() {
+            set(this, 'x', (get(this, 'x') || 0));
+            set(this, 'y', (get(this, 'y') || 0));
+            set(this, 'scaleX', (get(this, 'scaleX') || 1));
+            set(this, 'scaleY', (get(this, 'scaleY') || 1));
+        },
 
-        draw: Ember.K,
-
-        createDelegate: function(deep) {
+        createdelegate: function(deep) {
             return Ember.copy(this, deep);
         },
 
         copy: function(deep) {
-            if (deep) {
-                properties = get(this, 'properties').copy(deep);
-            } else {
-                properties = get(this, 'properties');
-            }
-
-            return this.constructor.create({
-                properties: properties
-            });
+            return this.constructor.create(this.copyProperties(deep));
         },
 
         removeFromStage: function(bridge) {

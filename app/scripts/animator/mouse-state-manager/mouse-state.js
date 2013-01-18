@@ -28,16 +28,6 @@ define(['ember'], function(Ember) {
         mouseUp_after: mouse_event_after,
         mouseMove_after: mouse_event_after,
         mouseEnter_after: mouse_event_after,
-        mouseLeave_after: mouse_event_after,
-
-        getOffsets: function(event) {
-            var canvasView = event.context;
-
-            var offset = canvasView.$().offset();
-            var cx = event.pageX - offset.left;
-            var cy = event.pageY - offset.top;
-
-            return { offset: offset, cx: cx, cy: cy };
-        }
+        mouseLeave_after: mouse_event_after
     });
 });

@@ -10,21 +10,35 @@ define(['zombie/coreshape'], function(CoreShape) {
             });
         },
 
+        init: function() {
+            this._super.apply(this, arguments);
+
+            this.updateParents();
+        },
+
+        updateParents: function() {
+            (get(this, 'shapes') || []).forEach(function(shape) {
+                set(shape, 'parent', this);
+            }, this);
+        },
+
         shapesChanged: function() {
+            this.updateParents();
             this.draw(get(this, 'bridge'));
         }.observes('shapes.@each'),
 
         getContainedPoints: function(x,y,w,h) {
-            return (get(this, 'shapes') || []).map(function(shape) {
+            var points = (get(this, 'shapes') || []).map(function(shape) {
                 return shape.getContainedPoints(x,y,w,h);
             }).reduce(function(a, b) {
                 a.pushObjects(b);
                 return a;
             }, []);
+            return points;
         },
 
         copy: function(deep) {
-            return this.constructor.create({
+            return this.constructor.create(this.copyProperties(deep), {
                 shapes: (get(this, 'shapes') || []).map(function(shape) {
                     return shape.copy(deep);
                 })

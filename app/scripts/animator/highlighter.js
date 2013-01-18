@@ -18,14 +18,9 @@ define(['ember', 'zombie/zombie'], function(Ember, Zombie) {
 
             pointShapes = points.map(function(point) {
                 var shape = Zombie.Circle.create({
-                    properties: P({
-                        shape: P({
-                            x: point[0], y: point[1]
-                        }),
-                        circle: P({
-                            radius: 2
-                        })
-                    })
+                    x: point[0], 
+                    y: point[1],
+                    radius: 2
                 });
 
                 canvasView.addShapeToStage(shape);

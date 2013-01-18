@@ -9,16 +9,10 @@ define(['ember', 'zombie/zombie', 'animator/mouse-state-manager/mouse-state'], f
             set(this, 'context', context);
 
             var rectangle = Zombie.Rectangle.create({
-                properties: P({
-                    rectangle: P({
-                        width: 0,
-                        height: 0
-                    }),
-                    shape: P({
-                        x: context.cx,
-                        y: context.cy
-                    })
-                })
+                width: 0,
+                height: 0,
+                x: context.cx,
+                y: context.cy
             });
 
             set(this, 'context.rectangle', rectangle);
@@ -40,8 +34,8 @@ define(['ember', 'zombie/zombie', 'animator/mouse-state-manager/mouse-state'], f
             manager.send('highlightPointsInRectangle', canvasView, x, y, width, height);
         },
 
-        setCorners: function(event) {
-            var offsets = this.getOffsets(event);
+        setCorners: function(manager, event) {
+            var offsets = manager.getOffsets(event);
 
             var context = get(this, 'context');
 
@@ -66,12 +60,12 @@ define(['ember', 'zombie/zombie', 'animator/mouse-state-manager/mouse-state'], f
         },
 
         mouseMove: function(manager, event) {
-            this.setCorners(event);
+            this.setCorners(manager, event);
             this.highlights(manager, event);
         },
 
         mouseUp: function(manager, event) {
-            this.setCorners(event);
+            this.setCorners(manager, event);
 
             var canvasView = event.context;
             var rectangle = get(this, 'context.rectangle');
@@ -93,7 +87,7 @@ define(['ember', 'zombie/zombie', 'animator/mouse-state-manager/mouse-state'], f
                 });
 
                 canvasView.addShape(Zombie.Group.create({
-                    shapes: shapes 
+                    shapes: shapes
                 }));
             }
 

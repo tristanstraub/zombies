@@ -18,6 +18,16 @@ define(['ember', 'animator/mouse-state-manager/mouse-state', 'animator/highlight
             set(this, 'cursorHighlighter', Highlighter.create());
         },
 
+        getOffsets: function(event) {
+            var canvasView = event.context;
+
+            var offset = canvasView.$().offset();
+            var cx = event.pageX - offset.left;
+            var cy = event.pageY - offset.top;
+
+            return { offset: offset, cx: cx, cy: cy };
+        },
+
         states: {
             idle: MouseState.create({
                 mouseDown: function(manager, event) {
@@ -42,11 +52,9 @@ define(['ember', 'animator/mouse-state-manager/mouse-state', 'animator/highlight
 
         highlightShapesAndPoints: function(manager, event) {
             var canvasView = event.context;
-            
-            var offset = canvasView.$().offset();
-            var px = event.pageX - offset.left;
-            var py = event.pageY - offset.top;
-            var shapesPoints = canvasView.shapesAtPoint(px, py);
+          
+            var offsets = manager.getOffsets(event);
+            var shapesPoints = canvasView.shapesAtPoint(offsets.cx, offsets.cy);
 
             var shapes = [];
             var points = [];

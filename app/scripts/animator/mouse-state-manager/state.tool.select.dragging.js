@@ -15,7 +15,7 @@ define(['ember', 'animator/mouse-state-manager/mouse-state'], function(Ember, Mo
       set(this, 'starty', context.y);
 
       var coords = context.shapes.map(function(shape) {
-        return { x:get(shape, 'properties.shape.x'), y: get(shape, 'properties.shape.y') };
+        return { x:get(shape, 'x'), y: get(shape, 'y') };
       });
       set(this, 'coords', coords);
     },
@@ -32,8 +32,8 @@ define(['ember', 'animator/mouse-state-manager/mouse-state'], function(Ember, Mo
         var newX = coords[index].x + dx;
         var newY = coords[index].y + dy;
 
-        set(shape, 'properties.shape.x', newX);
-        set(shape, 'properties.shape.y', newY);
+        set(shape, 'x', newX);
+        set(shape, 'y', newY);
       });
     },
 

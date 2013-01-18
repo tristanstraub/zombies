@@ -1,9 +1,11 @@
-define(['zombie/shape'], function(ZombieShape) {
+define(['zombie/shape', 'zombie/properties'], function(ZombieShape, ZombieProperties) {
     var set = Ember.set, get = Ember.get;
 
     return ZombieShape.extend({
-        width: 'properties.rectangle.width',
-        height: 'properties.rectangle.height',
+        copyProperties: ZombieProperties.copyProperties('width', 'height'),
+
+        width: 0,
+        height: 0,
 
         draw: function(bridge) {
             bridge = bridge || get(this, 'bridge');
@@ -25,9 +27,7 @@ define(['zombie/shape'], function(ZombieShape) {
 
             return points.filter(function(point) {
                 return this.boxContainsPoint(x,y,w,h, cx + point.objectAt(0), cy + point.objectAt(1));
-            }, this).map(function(point, index) {
-                return { point: point, index: index };
-            });
+            }, this);
         }
     });
 });

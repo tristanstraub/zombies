@@ -7,21 +7,19 @@ define(['ember', 'animator/mouse-state-manager/mouse-state', 'animator/mouse-sta
             setup: function(manager, event) {
                 var canvasView = event.context;
 
-                var offset = canvasView.$().offset();
+                var offsets = manager.getOffsets(event);
+				var shapes = canvasView.shapesAtPoint(offsets.cx, offsets.cy).mapProperty('shape');
 
-                var cx = event.pageX - offset.left;
-                var cy = event.pageY - offset.top;
-
-					      var shapes = canvasView.shapesAtPoint(cx, cy).mapProperty('shape');
-                
                 if (shapes.length > 0) {
-                    manager.transitionTo('dragging', { event: event, shapes: shapes, x: cx, y: cy });
+                    manager.transitionTo('dragging', { event: event, shapes: shapes, x: offsets.cx, y: offsets.cy });
                 }
             },
+
             mouseUp: function(manager, event) {
                 manager.transitionTo('idle');
             }
         }),
+
         dragging: StateToolSelectDragging
     });
 });

@@ -13,8 +13,6 @@ end
 
 Then "I click on the canvas" do
   find('.main-canvas').click()
+#  sleep 2
 end
-
-
-
 

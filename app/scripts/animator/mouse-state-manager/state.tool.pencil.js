@@ -45,7 +45,7 @@ define(['ember', 'zombie/zombie', 'animator/mouse-state-manager/mouse-state'], f
             setup: function(manager, event) {
                 var canvasView = event.context;
 
-                var offsets = this.getOffsets(event);
+                var offsets = manager.getOffsets(event);
 
                 var startPoint = getFirstNearestLineEndPoint(canvasView, offsets.cx, offsets.cy);
                 if (!startPoint) {
@@ -53,15 +53,9 @@ define(['ember', 'zombie/zombie', 'animator/mouse-state-manager/mouse-state'], f
                 }
 
                 var line = Zombie.Line.create({
-                    properties: P({
-                        line: P({
-                            edge: [Ember.copy(startPoint),[offsets.cx,offsets.cy]]
-                        }),
-                        shape: P({
-                            x: 0,
-                            y: 0
-                        })
-                    })
+                    edge: [Ember.copy(startPoint),[offsets.cx,offsets.cy]],
+                    x: 0,
+                    y: 0
                 });
 
                 canvasView.addShapeToStage(line);
@@ -83,7 +77,7 @@ define(['ember', 'zombie/zombie', 'animator/mouse-state-manager/mouse-state'], f
 
             mouseMove: function(manager, event) {
                 var canvasView = event.context;
-                var offsets = this.getOffsets(event);
+                var offsets = manager.getOffsets(event);
 
                 var edge = get(this, 'context.line.edge');
 
@@ -92,7 +86,7 @@ define(['ember', 'zombie/zombie', 'animator/mouse-state-manager/mouse-state'], f
 
             mouseUp: function(manager, event) {
                 var canvasView = event.context;
-                var offsets = this.getOffsets(event);
+                var offsets = manager.getOffsets(event);
 
                 var edge = get(this, 'context.line.edge');
                 var endPoint = getFirstNearestLineEndPoint(canvasView, offsets.cx, offsets.cy, get(this, 'context.line'));

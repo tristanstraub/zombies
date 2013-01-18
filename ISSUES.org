@@ -7,6 +7,7 @@ You can only see shapes that are penciled in the top left corner of the canvas.
 
 ** TODO drag after boxselect leaves highlighted points
 ** TODO when grouping, make sure grouping again doesn't break things or split things
+** TODO mousemove out of canvas stops boxselect growing
 * FEATURES
 ** DONE Feature: pencil tool
 
@@ -19,11 +20,11 @@ You can only see shapes that are penciled in the top left corner of the canvas.
 ** TODO snap to point on drag
     
 * QUESTIONS
-
+  
 Do properties really need the excessive nesting?
 Should properties<->shape be oneway or twoway?
 
-*JUNK
+* JUNK
 
       // var brushProperties = P({
       //   copyProperties: Zombie.copyProperties('path', 'shape', 'animations'),

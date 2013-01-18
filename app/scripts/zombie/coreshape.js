@@ -3,12 +3,20 @@ define(['ember', 'zombie/object'], function(Ember, ZombieObject) {
 
     return ZombieObject.extend(Ember.Copyable, {
         id: function() { return Ember.guidFor(this); }.property(),
-        properties: null,
+        parent: null,
 
         x: 0,
         y: 0,
         scaleX: 1,
         scaleY: 1,
+
+        xDidChange: function() {
+            
+        }.observes('x'),
+
+        copyProperties: function(deep, properties) {
+            return properties || {};
+        },
 
         getContainedPoints: function() {
             return [];

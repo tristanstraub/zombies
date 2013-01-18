@@ -24,8 +24,8 @@ define(['ember', 'animator/mouse-state-manager/mouse-state'], function(Ember, Mo
                     
                     set(canvasDelegate, 'brush', shapeDelegate);
 
-                    set(canvasDelegate, 'properties.shape.x', x);
-                    set(canvasDelegate, 'properties.shape.y', y);
+                    set(canvasDelegate, 'x', x);
+                    set(canvasDelegate, 'y', y);
 
                     canvas.addShape(canvasDelegate);
                     get(this, 'context.shapes').addObject(shapeDelegate);

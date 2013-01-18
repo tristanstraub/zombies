@@ -1,4 +1,16 @@
 module TestHelper
+  def canvasMouseDown(x, y)
+    page.execute_script("testHelper.canvas.mouseDown(#{x},#{y});");
+  end
+
+  def canvasMouseMoveTo(x, y)
+    page.execute_script("testHelper.canvas.mouseMoveTo(#{x},#{y});");
+  end
+
+  def canvasMouseUp(x, y)
+    page.execute_script("testHelper.canvas.mouseUp(#{x},#{y});");
+  end
+
   def visit_zombies
     visit "http://localhost:3501"
   end

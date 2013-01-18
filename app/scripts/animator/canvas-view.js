@@ -5,7 +5,7 @@ define(['ember', 'zombie/zombie'], function(Ember, Zombie) {
         return function(event) {
             var manager = get(this, 'mouseStateManager');
             event.context = this;
-            event.targetObject = get(this, 'controller.target');
+//            event.targetObject = get(this, 'controller.target');
 
             if (manager) {
                 manager.send(name, event);
@@ -67,17 +67,15 @@ define(['ember', 'zombie/zombie'], function(Ember, Zombie) {
             return get(this, 'shapes').map(function(shape) {
                 var w=20;
                 var h=20;
-                var pointsAndIndexes = shape.getContainedPoints(x-w/2,y-h/2,w,h);
-                var points = pointsAndIndexes.mapProperty('point');
-                return pointsAndIndexes.length > 0 ? { shape: shape, points: points, pointsAndIndexes: pointsAndIndexes } : null;
+                var points = shape.getContainedPoints(x-w/2,y-h/2,w,h);
+                return points.length > 0 ? { shape: shape, points: points } : null;
             }).filter(function(a) { return a; });
         },
 
         getContainedShapesPoints: function(x, y, w, h) {
             return get(this, 'shapes').map(function(shape) {
-                var pointsAndIndexes = shape.getContainedPoints(x,y,w,h);
-                var points = pointsAndIndexes.mapProperty('point');
-                return pointsAndIndexes.length > 0 ? { shape: shape, points: points, pointsAndIndexes: pointsAndIndexes } : null;
+                var points = shape.getContainedPoints(x,y,w,h);
+                return points.length > 0 ? { shape: shape, points: points } : null;
             }).filter(function(a) { return a; });
         },
 

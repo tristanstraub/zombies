@@ -2,7 +2,7 @@ define(['zombie/shape'], function(ZombieShape) {
     var set = Ember.set, get = Ember.get;
 
     return ZombieShape.extend({
-        pathBinding: 'properties.path',
+        path: '',
 
         getContainedPoints: function(x,y,w,h) {
             var self = this;

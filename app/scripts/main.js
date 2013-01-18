@@ -36,6 +36,6 @@ require.config({
     }
 });
 
-require(['animator/animator'], function(Animator) {
-
+require(['animator/animator', 'test-helper'], function(Animator, TestHelper) {
+  window.testHelper = TestHelper.create();
 });
