@@ -1,32 +1,29 @@
 define(['ember', 'livingdead/object', 'livingdead/bridged'], function(Ember, LivingDeadObject, LivingDeadBridged) {
   var set = Ember.set, get = Ember.get;
 
-  var shapePropertyAdderSetter = function(name) {
+  var propertyAdder = function(aname, bname) {
     return function() {
-      var shape = get(this, 'shape');
-      if (shape) {
-        var parent = get(this, 'parent');
-
-        var value = get(this, name);
-        var parentValue = parent ? get(parent, name) : 0;
-
-        shape[name] = value + parentValue;
-      }
-    }.observes(name, 'parent.' + name);
+      var a = get(this, aname) || 0;
+      var b = get(this, bname) || 0;
+      return a + b;
+    }.property(aname, bname);
   };
 
-  var shapePropertyMultSetter = function(name) {
+  var propertyMultiplier = function(aname, bname) {
+    return function() {
+      var a = get(this, aname) || 1;
+      var b = get(this, bname) || 1;
+      return a * b;
+    }.observes(aname, bname);
+  };
+
+  var shapeSetter = function(toName, fromName) {
     return function() {
       var shape = get(this, 'shape');
       if (shape) {
-        var parent = get(this, 'parent');
-
-        var value = get(this, name);
-        var parentValue = parent ? get(parent, name) : 1;
-
-        shape[name] = value * parentValue;
+        shape[toName] = get(this, fromName);
       }
-    }.observes(name, 'parent.' + name);
+    }.observes(fromName);
   };
 
   return LivingDeadObject.extend(Ember.Copyable, LivingDeadBridged, {
@@ -38,10 +35,15 @@ define(['ember', 'livingdead/object', 'livingdead/bridged'], function(Ember, Liv
     scaleX: 1,
     scaleY: 1,
 
-    xChanged: shapePropertyAdderSetter('x'),
-    yChanged: shapePropertyAdderSetter('y'),
-    scaleXChanged: shapePropertyMultSetter('scaleX'),
-    scaleYChanged: shapePropertyMultSetter('scaleY'),
+    realX: propertyAdder('x', 'parent.realX'),
+    realY: propertyAdder('y', 'parent.realY'),
+    realScaleX: propertyMultiplier('scaleX', 'parent.realScaleX'),
+    realScaleY: propertyMultiplier('scaleY', 'parent.realScaleY'),
+
+    xChanged: shapeSetter('x','realX'),
+    yChanged: shapeSetter('y','realY'),
+    scaleXChanged: shapeSetter('scaleX','realScaleX'),
+    scaleYChanged: shapeSetter('scaleY','realScaleY'),
 
     getPropertyNames: function() {
       return ['x','y','scaleX','scaleY'];
