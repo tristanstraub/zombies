@@ -2,7 +2,7 @@ define(['ember', 'livingdead/shape', 'livingdead/properties'], function(Ember, L
     var set = Ember.set, get = Ember.get;
 
     return LivingDeadShape.extend({
-        copyProperties: LivingDeadProperties.copyProperties('radius'),
+        getPropertyNames: LivingDeadProperties.propertyNames('radius'),
 
         radius: 0,
 

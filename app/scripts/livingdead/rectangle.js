@@ -2,7 +2,7 @@ define(['livingdead/shape', 'livingdead/properties'], function(LivingDeadShape, 
   var set = Ember.set, get = Ember.get;
 
   return LivingDeadShape.extend({
-    copyProperties: LivingDeadProperties.copyProperties('width', 'height'),
+    getPropertyNames: LivingDeadProperties.propertyNames('width', 'height'),
 
     width: 0,
     height: 0,

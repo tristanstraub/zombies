@@ -77,22 +77,33 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
       if (layers.has(name)) {
         return layers.get(name);
       } else {
-        var layer = [];
+        var layer = Ember.Set.create();
         layers.set(name, layer);
         return layer;
       }
     },
 
     addShapeToLayer: function(shape, layerName) {
-      console.log('add',shape, layerName);
       var layer = this.getLayer(layerName);
       layer.addObject(shape);
+
+      get(this, 'shapes').addObject(shape);
+    },
+
+    removeShape: function(shape) {
+      var layers = get(this, 'layers');
+      layers.keys.forEach(function(key) {
+        layers.get(key).removeObject(shape);
+      });
+
+      get(this, 'shapes').removeObject(shape);
     },
 
     removeShapeFromLayer: function(shape, layerName) {
-      console.log('remove',shape, layerName);
       var layer = this.getLayer(layerName);
       layer.removeObject(shape);
+
+      get(this, 'shapes').removeObject(shape);
     },
 
     highlightShapesAndPoints: function(manager, event) {

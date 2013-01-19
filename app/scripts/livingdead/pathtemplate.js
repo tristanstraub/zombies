@@ -2,7 +2,7 @@ define(['handlebars', 'livingdead/properties'], function(Handlebars, LivingDeadP
     var set = Ember.set, get = Ember.get;
 
     return LivingDeadProperties.extend({
-        copyProperties: LivingDeadProperties.copyProperties('pathTemplate'),
+        getPropertyNames: LivingDeadProperties.propertyNames('pathTemplate'),
 
         pathTemplate: '',
 

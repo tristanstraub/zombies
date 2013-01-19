@@ -1,39 +1,61 @@
 define(['ember', 'livingdead/object'], function(Ember, LivingDeadObject) {
-    var set = Ember.set, get = Ember.get;
+  var set = Ember.set, get = Ember.get;
 
-    return LivingDeadObject.extend(Ember.Copyable, {
-        id: function() { return Ember.guidFor(this); }.property(),
-        parent: null,
+  return LivingDeadObject.extend(Ember.Copyable, {
+    id: function() { return Ember.guidFor(this); }.property(),
+    parent: null,
 
-        x: 0,
-        y: 0,
-        scaleX: 1,
-        scaleY: 1,
+    x: 0,
+    y: 0,
+    scaleX: 1,
+    scaleY: 1,
 
-        copyProperties: function(deep, properties) {
-            return properties || {};
-        },
+    getPropertyNames: function() {
+      return ['x','y','scaleX','scaleY'];
+    },
 
-        getContainedPoints: function() {
-            return [];
-        },
+    copyProperties: function() {
+      var names = this.getPropertyNames();
+      var properties = {};
+      names.forEach(function(name) {
+        properties[name] = Ember.copy(get(this, name));
+      }, this);
 
-        createDelegate: function(deep) {
-            return Ember.copy(this, deep);
-        },
+      return properties;
+    },
 
-        boxContainsPoint: function(x, y, w, h, x0, y0)  {
-            return (x <= x0 && x0 <= x + w && y <= y0 && y0 <= y + h);
-        },
+    getContainedPoints: function() {
+      return [];
+    },
 
-        copy: Ember.K,
+    createDelegate: function(deep) {
+      return Ember.copy(this, deep);
+    },
 
-        draw: Ember.K,
+    createMirror: function() {
+      var bindings = {
+        inverseImage: this
+      };
 
-        removeFromStage: Ember.K,
+      this.getPropertyNames().forEach(function(name) {
+        bindings[name + 'Binding'] = Ember.Binding.oneWay('inverseImage.' + name);
+      });
 
-        addToStage: Ember.K,
+      return this.constructor.create(bindings);
+    },
 
-        clear: Ember.K
-    });
+    boxContainsPoint: function(x, y, w, h, x0, y0)  {
+      return (x <= x0 && x0 <= x + w && y <= y0 && y0 <= y + h);
+    },
+
+    copy: Ember.K,
+
+    draw: Ember.K,
+
+    removeFromStage: Ember.K,
+
+    addToStage: Ember.K,
+
+    clear: Ember.K
+  });
 });

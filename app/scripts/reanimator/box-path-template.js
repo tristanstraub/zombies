@@ -6,7 +6,7 @@ define(['livingdead/livingdead'], function(LivingDead) {
     };
 
     return LivingDead.PathTemplate.extend({
-        copyProperties: LivingDead.Properties.copyProperties('width', 'height'),
+        copyProperties: LivingDead.Properties.propertyNames('width', 'height'),
 
         width: pathTemplateProperty('width'),
         height: pathTemplateProperty('height')

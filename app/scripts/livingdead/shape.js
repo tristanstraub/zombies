@@ -31,10 +31,6 @@ define(['ember', 'livingdead/object', 'livingdead/coreshape'], function(Ember, L
     id: function() { return Ember.guidFor(this); }.property(),
     parent: null,
 
-    didParentChange: function() {
-      console.log(get(this, 'parent.x'), get(this, 'parent.y'));
-    }.observes('parent.x','parent.y'),
-
     shape: function() {
       return new createjs.Shape();
     }.property(),
@@ -45,10 +41,7 @@ define(['ember', 'livingdead/object', 'livingdead/coreshape'], function(Ember, L
     scaleY: shapePropertyMultSetter('parent.scaleY'),
 
     init: function() {
-      set(this, 'x', (get(this, 'x') || 0));
-      set(this, 'y', (get(this, 'y') || 0));
-      set(this, 'scaleX', (get(this, 'scaleX') || 1));
-      set(this, 'scaleY', (get(this, 'scaleY') || 1));
+      this._super.apply(this, arguments);
     },
 
     createdelegate: function(deep) {
@@ -56,14 +49,18 @@ define(['ember', 'livingdead/object', 'livingdead/coreshape'], function(Ember, L
     },
 
     copy: function(deep) {
-      return this.constructor.create(this.copyProperties(deep));
+      var properties = this.copyProperties();
+      console.log(properties);
+      return this.constructor.create(properties);
     },
 
     removeFromStage: function(bridge) {
       bridge = bridge || get(this, 'bridge');
       set(this, 'bridge', bridge);
 
-      bridge.removeShapeFromStage(this);
+      if (bridge) {
+        bridge.removeShapeFromStage(this);
+      }
     },
 
     addToStage: function(bridge) {

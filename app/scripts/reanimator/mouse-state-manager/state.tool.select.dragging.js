@@ -33,8 +33,6 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state'], function(Ember, 
         var newX = coords[index].x + dx;
         var newY = coords[index].y + dy;
 
-        console.log(newX, newY);
-
         set(shape, 'x', newX);
         set(shape, 'y', newY);
       });

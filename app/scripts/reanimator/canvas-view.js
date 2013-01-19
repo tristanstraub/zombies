@@ -45,30 +45,30 @@ define(['ember', 'livingdead/livingdead'], function(Ember, LivingDead) {
             oldvalue.removeEnumerableObserver(this);
           }
           
-          value.addEnumerableObserver(this);
+          if (value) {
+            value.addEnumerableObserver(this);
+          }
 
-          return value;
+          return value || [];
         }),
 
         enumerableWillChange: function(content, removed, added) {
+          if (removed) {
+            var bridge = get(this, 'bridge');
+            removed.forEach(function(shape) {
+              shape.removeFromStage(bridge);
+            });
+          }
         },
         
         enumerableDidChange: function(content, removed, added) {
-          if (removed) {
-            removed.forEach(function(shape) {
-              shape.removeFromStage(get(this, 'bridge'));
-            });
-          }
-
           if (added) {
+            var bridge = get(this, 'bridge');
+
             added.forEach(function(shape) {
-              shape.removeFromStage(get(this, 'bridge'));
+              shape.addToStage(bridge);
             });
           }
-        },
-
-        addShapeToStage: function(shape) {
-            shape.addToStage(get(this, 'bridge'));
         },
 
         canvasWidth: null,

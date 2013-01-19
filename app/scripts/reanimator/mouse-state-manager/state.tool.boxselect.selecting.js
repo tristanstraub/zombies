@@ -85,9 +85,9 @@ define(['ember', 'livingdead/livingdead', 'reanimator/mouse-state-manager/mouse-
           manager.removeShape(shape);
         });
 
-        manager.addShape(LivingDead.Group.create({
+        manager.addShapeToLayer(LivingDead.Group.create({
           shapes: shapes
-        }));
+        }), 'foreground');
       }
 
       manager.transitionTo('idle');

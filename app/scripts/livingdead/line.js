@@ -1,7 +1,9 @@
-define(['livingdead/shape'], function(LivingDeadShape) {
+define(['livingdead/shape', 'livingdead/properties'], function(LivingDeadShape, LivingDeadProperties) {
     var set = Ember.set, get = Ember.get;
 
     return LivingDeadShape.extend({
+        getPropertyNames: LivingDeadProperties.propertyNames('edge'),
+
         edge: null,
 
         draw: function(bridge) {
