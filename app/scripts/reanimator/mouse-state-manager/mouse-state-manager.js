@@ -34,7 +34,7 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
     },
 
     shapesAtPoint: function(x, y) {
-      return get(this, 'shapes').map(function(shape) {
+      return this.getLayer('foreground').map(function(shape) {
         var w=20;
         var h=20;
         var points = shape.getContainedPoints(x-w/2,y-h/2,w,h);
@@ -43,7 +43,7 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
     },
 
     getContainedShapesPoints: function(x, y, w, h) {
-      return get(this, 'shapes').map(function(shape) {
+      return this.getLayer('foreground').map(function(shape) {
         var points = shape.getContainedPoints(x,y,w,h);
         return points.length > 0 ? { shape: shape, points: points } : null;
       }).filter(function(a) { return a; });
@@ -169,14 +169,27 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
     },
 
     highlightPointsInRectangle: function(manager, x, y, width, height) {
-      // var shapesPoints = manager.getContainedShapesPoints(x,y,width,height);
-      // var points = shapesPoints
-      //       .mapProperty('points')
-      //       .reduce(function(a,b) {
-      //         a.pushObjects(b);
-      //         return a;
-      //       }, []);
-      // get(this, 'rectangleHighlighter').highlightPoints(manager, points);
+      var shapesPoints = manager.getContainedShapesPoints(x,y,width,height);
+      var points = shapesPoints.map(function(data) { 
+        var points = data.points;
+        
+        return points.map(function(point) {
+          return [point[0], point[1]];
+        });
+      }).reduce(function(a,b) { 
+        a.pushObjects(b);
+        return a;
+      }, []);
+
+      manager.clearLayer('rectangleHighlights');
+      points.forEach(function(point) {
+        var shape = new LivingDead.Circle({
+          x: point[0], 
+          y: point[1],
+          radius: 2
+        });
+        manager.addShapeToLayer(shape, 'rectangleHighlights');
+      });
     }
   });
 });

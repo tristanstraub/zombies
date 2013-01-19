@@ -30,8 +30,8 @@ define(['ember', 'livingdead/livingdead', 'reanimator/mouse-state-manager/mouse-
       var y = get(this, 'context.rectangle.y');
       var width = get(this, 'context.rectangle.width');
       var height = get(this, 'context.rectangle.height');
-      
-      manager.send('highlightPointsInRectangle', manager, x, y, width, height);
+
+      manager.send('highlightPointsInRectangle', x, y, width, height);
     },
 
     setCorners: function(manager, event) {
@@ -85,7 +85,7 @@ define(['ember', 'livingdead/livingdead', 'reanimator/mouse-state-manager/mouse-
           manager.removeShape(shape);
         });
 
-        manager.addShapeToLayer(LivingDead.Group.create({
+        manager.addShapeToLayer(new LivingDead.Group({
           shapes: shapes
         }), 'foreground');
       }

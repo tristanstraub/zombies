@@ -21,10 +21,10 @@ define(['livingdead/shape', 'livingdead/properties'], function(LivingDeadShape, 
       var width = get(this, 'width');
       var height = get(this, 'height');
 
-      var points = [[0,0],[width, 0],[width,height],[0,height]];
+      var points = [[cx,cy],[cx+width, cy],[cx+width,cy+height],[cx,cy+height]];
 
       return points.filter(function(point) {
-        return this.boxContainsPoint(x,y,w,h, cx + point.objectAt(0), cy + point.objectAt(1));
+        return this.boxContainsPoint(x,y,w,h, point.objectAt(0), point.objectAt(1));
       }, this);
     }
   });
