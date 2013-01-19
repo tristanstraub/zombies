@@ -11,9 +11,7 @@ define(['ember', 'livingdead/livingdead', 'reanimator/mouse-state-manager/mouse-
     var shapesPoints = manager.shapesAtPoint(cx, cy);
 
     if (shapesPoints.length > 0) {
-      var lines = shapesPoints.filter(function(shapePoint) {
-        return LivingDead.Line.detectInstance(shapePoint.shape);
-      });
+      var lines = shapesPoints;
 
       if (lines.length > 0) {
         var point = shapesPoints.filter(function(sh) { 

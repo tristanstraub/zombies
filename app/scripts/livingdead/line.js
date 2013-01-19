@@ -16,8 +16,8 @@ define(['livingdead/shape', 'livingdead/properties'], function(LivingDeadShape, 
     },
 
     getContainedPoints: function(x,y,w,h) {
-      var cx = get(this, 'x') + (get(this, 'parent.x')||0);
-      var cy = get(this, 'y') + (get(this, 'parent.y')||0);
+      var cx = get(this, 'realX');
+      var cy = get(this, 'realY');
 
       return get(this, 'edge').map(function(point) {
         return [point.objectAt(0)+cx, point.objectAt(1)+cy];
