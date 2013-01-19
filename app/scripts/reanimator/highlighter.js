@@ -6,7 +6,7 @@ define(['ember', 'livingdead/livingdead'], function(Ember, LivingDead) {
   var P = LivingDead.P;
 
   return Ember.Object.extend({
-    highlightedPoints: null,
+    highlightedPoints: [],
 
     init: function() {
       this._super.apply(this, arguments);

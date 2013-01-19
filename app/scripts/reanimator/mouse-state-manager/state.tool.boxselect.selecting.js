@@ -8,7 +8,7 @@ define(['ember', 'livingdead/livingdead', 'reanimator/mouse-state-manager/mouse-
       var event = context.event;
       set(this, 'context', context);
 
-      var rectangle = LivingDead.Rectangle.create({
+      var rectangle = new LivingDead.Rectangle({
         width: 0,
         height: 0,
         x: context.cx,

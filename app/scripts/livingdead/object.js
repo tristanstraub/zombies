@@ -1,9 +1,17 @@
 define(['ember'], function(Ember) {
-    return Ember.Object.extend({
-        bridge: null,
+  var set = Ember.set, get = Ember.get;
 
-        dump: function() {
-            return Ember.inspect(this);
-        }.property().volatile()
-    });
+  return Ember.Object.extend({
+    init: function(properties) {
+      this._super.apply(this, arguments);
+
+      if (properties) {
+        this.setProperties(properties);
+      }
+    },
+
+    dump: function() {
+      return Ember.inspect(this);
+    }.property().volatile()
+  });
 });

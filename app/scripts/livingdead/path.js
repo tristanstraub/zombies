@@ -39,10 +39,6 @@ define(['livingdead/shape'], function(LivingDeadShape) {
 
         traversePath: function(listener) {
             get(this, 'bridge').shapeEncodePath(this, listener);
-        },
-
-        pathChanged: function() {
-            this.draw(get(this, 'bridge'));
-        }.observes('path')
+        }
     });
 });

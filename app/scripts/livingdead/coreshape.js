@@ -1,7 +1,7 @@
-define(['ember', 'livingdead/object'], function(Ember, LivingDeadObject) {
+define(['ember', 'livingdead/object', 'livingdead/bridged'], function(Ember, LivingDeadObject, LivingDeadBridged) {
   var set = Ember.set, get = Ember.get;
 
-  return LivingDeadObject.extend(Ember.Copyable, {
+  return LivingDeadObject.extend(Ember.Copyable, LivingDeadBridged, {
     id: function() { return Ember.guidFor(this); }.property(),
     parent: null,
 
@@ -13,6 +13,32 @@ define(['ember', 'livingdead/object'], function(Ember, LivingDeadObject) {
     getPropertyNames: function() {
       return ['x','y','scaleX','scaleY'];
     },
+
+    getPropertyObserverNames: function() {
+      return this.getPropertyNames();
+    },
+
+    init: function() {
+      this.attachDrawingPropertyObserver();
+
+      this._super.apply(this, arguments);
+    },
+
+    attachDrawingPropertyObserver: function() {
+      var bindings = { };
+      var self = this;
+      this.getPropertyObserverNames().forEach(function(name) {
+        bindings[name + 'DidChange'] = function() {
+          self.draw();
+        }.observes(name);
+      });
+
+      return this.reopen(bindings);
+    },
+
+    didBridgeChange: function() {
+      this.draw(get(this, 'bridge'));
+    }.observes('bridge'),
 
     copyProperties: function() {
       var names = this.getPropertyNames();
@@ -38,6 +64,10 @@ define(['ember', 'livingdead/object'], function(Ember, LivingDeadObject) {
       };
 
       this.getPropertyNames().forEach(function(name) {
+        bindings[name + 'Binding'] = Ember.Binding.oneWay('inverseImage.' + name);
+      });
+
+      this.getPropertyObserverNames().forEach(function(name) {
         bindings[name + 'Binding'] = Ember.Binding.oneWay('inverseImage.' + name);
       });
 

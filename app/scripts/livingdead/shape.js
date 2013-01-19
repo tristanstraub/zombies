@@ -1,13 +1,15 @@
-define(['ember', 'livingdead/object', 'livingdead/coreshape'], function(Ember, LivingDeadObject, CoreShape) {
+define(['ember', 'livingdead/object', 'livingdead/coreshape', 'livingdead/easel-bridge'], function(Ember, LivingDeadObject, CoreShape, EaselBridge) {
   var set = Ember.set, get = Ember.get;
 
   var shapePropertyAdderSetter = function(name) {
     return Ember.computed(function(key, value, oldvalue) {
       if (arguments.length > 1) {
+        var shape = get(this, 'shape');
+
         var parentValue = get(this, name) || 0;
 
-        var shape = get(this, 'shape');
         shape[key] = value + parentValue;
+
       }
 
       return value;
@@ -32,7 +34,9 @@ define(['ember', 'livingdead/object', 'livingdead/coreshape'], function(Ember, L
     parent: null,
 
     shape: function() {
-      return new createjs.Shape();
+      var shape = new createjs.Shape();
+
+      return shape;
     }.property(),
 
     x: shapePropertyAdderSetter('parent.x'),
@@ -40,17 +44,13 @@ define(['ember', 'livingdead/object', 'livingdead/coreshape'], function(Ember, L
     scaleX: shapePropertyMultSetter('parent.scaleX'),
     scaleY: shapePropertyMultSetter('parent.scaleY'),
 
-    init: function() {
-      this._super.apply(this, arguments);
-    },
-
     createdelegate: function(deep) {
       return Ember.copy(this, deep);
     },
 
     copy: function(deep) {
       var properties = this.copyProperties();
-      console.log(properties);
+
       return this.constructor.create(properties);
     },
 
@@ -64,7 +64,10 @@ define(['ember', 'livingdead/object', 'livingdead/coreshape'], function(Ember, L
     },
 
     addToStage: function(bridge) {
+      Ember.assert("is bridge", !bridge || EaselBridge.detectInstance(bridge));
+
       bridge = bridge || get(this, 'bridge');
+ 
       set(this, 'bridge', bridge);
 
       this.draw(bridge);

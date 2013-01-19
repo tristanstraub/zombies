@@ -34,91 +34,91 @@
     </script>
 
     <script type="text/x-handlebars" data-template-name="workspace">
-      <div class="row">
-        <div class="tools span3">
-          <h4>Tools</h4>
-          <div class="collection">
-            {{view Reanimator.ComparisonView left="select" rightBinding="content.tool" viewName="isSelect"}}
-            {{view Reanimator.ComparisonView left="boxselect" rightBinding="content.tool" viewName="isBoxSelect"}}
-            {{view Reanimator.ComparisonView left="edit" rightBinding="content.tool" viewName="isEdit"}}
-            {{view Reanimator.ComparisonView left="pencil" rightBinding="content.tool" viewName="isPencil"}}
-            {{view Reanimator.ComparisonView left="brush" rightBinding="content.tool" viewName="isBrush"}}
+      <div class="tools">
+        <h4>Tools</h4>
+        <div class="collection">
+          {{view Reanimator.ComparisonView left="select" rightBinding="content.tool" viewName="isSelect"}}
+          {{view Reanimator.ComparisonView left="boxselect" rightBinding="content.tool" viewName="isBoxSelect"}}
+          {{view Reanimator.ComparisonView left="edit" rightBinding="content.tool" viewName="isEdit"}}
+          {{view Reanimator.ComparisonView left="pencil" rightBinding="content.tool" viewName="isPencil"}}
+          {{view Reanimator.ComparisonView left="brush" rightBinding="content.tool" viewName="isBrush"}}
 
-            <button id="box-select-tool" {{action chooseBoxSelectTool }} {{bindAttr class="view.isBoxSelect.equal:selected"}}><i class="icon-retweet"></i></button>
-            <button id="select-tool" {{action chooseSelectTool }} {{bindAttr class="view.isSelect.equal:selected"}}><i class="icon-hand-left"></i></button>
-            <button id="edit-tool" {{action chooseEditTool }} {{bindAttr class="view.isEdit.equal:selected"}}><i class="icon-edit"></i></button>
-            <button id="pencil-tool" {{action choosePencilTool }} {{bindAttr class="view.isPencil.equal:selected"}}><i class="icon-pencil"></i></button>
-            <button id="brush-tool" {{action chooseBrushTool }} {{bindAttr class="view.isBrush.equal:selected"}}><i class="icon-tint"></i></button>
-          </div>
-
-          <div class="brushes">
-            <div class="collection">
-              <h4>Brushes</h4>
-              <ul>
-                {{#each shape in content.brushes}}
-                <li>
-                  {{view Reanimator.ComparisonView leftBinding="content.selectedBrush" rightBinding="shape" viewName="selectBrush"}}
-                  <button {{action selectBrush shape}} {{bindAttr class="view.selectedBrush.equal:selected"}}>
-                    {{view Reanimator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
-                  </button>
-                </li>
-                {{/each}}
-              </ul>
-            </div>
-          </div>
+          <button id="box-select-tool" {{action chooseBoxSelectTool }} {{bindAttr class="view.isBoxSelect.equal:selected"}}><i class="icon-retweet"></i></button>
+          <button id="select-tool" {{action chooseSelectTool }} {{bindAttr class="view.isSelect.equal:selected"}}><i class="icon-hand-left"></i></button>
+          <button id="edit-tool" {{action chooseEditTool }} {{bindAttr class="view.isEdit.equal:selected"}}><i class="icon-edit"></i></button>
+          <button id="pencil-tool" {{action choosePencilTool }} {{bindAttr class="view.isPencil.equal:selected"}}><i class="icon-pencil"></i></button>
+          <button id="brush-tool" {{action chooseBrushTool }} {{bindAttr class="view.isBrush.equal:selected"}}><i class="icon-tint"></i></button>
         </div>
 
-        <div class="canvas span9">
-          {{view Reanimator.CanvasView id="main-canvas" toolBinding="content.tool" canvasWidth="640" canvasHeight="480" mouseStateManagerBinding="content.canvasMouseStateManager" 
-          shapesBinding="content.shapes" viewName="mainCanvas"}}
-        </div>
       </div>
 
-      <div class="row">
-        <div class="timeline offset3 span9">
-          <h4>Timeline</h4>
-          {{view Reanimator.TimelineView}}
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="shapes offset3 span9">
-          <h4>Shapes</h4>
-          <div class="collection">
-            <ul>
-              {{#each shape in content.shapes}}
-              <li>
-                {{#view}}
-                <button>
-                  {{view Reanimator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
-                </button>
-                {{/view}}
-              </li>
-              {{/each}}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      
-      <div class="row">
-        <div class="properties offset3 span9"> 
-          <h4>Properties</h4>
+      <div class="brushes">
+        <h4>Brushes</h4>
+        <div class="collection">
           <ul>
-            {{#each shape in content.selectedShapes}}
+            {{#each shape in content.brushes}}
             <li>
-              {{shape.properties.dump}}
-              <ul>
-                {{#each animation in shape.properties.animations}}
-                <li><a href="#" {{action animate shape animation}}>{{this.name}}</a></li>
-                {{/each}}
-              </ul>
-
+              {{view Reanimator.ComparisonView leftBinding="content.selectedBrush" rightBinding="shape" viewName="selectBrush"}}
+              <button {{action selectBrush shape}} {{bindAttr class="view.selectedBrush.equal:selected"}}>
+                {{view Reanimator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
+              </button>
             </li>
             {{/each}}
           </ul>
         </div>
       </div>
+
+
+      <div class="canvas">
+        {{view Reanimator.CanvasView id="main-canvas" toolBinding="content.tool" canvasWidth="640" canvasHeight="480" mouseStateManagerBinding="content.canvasMouseStateManager" 
+        shapesBinding="content.shapes" viewName="mainCanvas"}}
+      </div>
+
+
+      <div class="timeline">
+        <h4>Timeline</h4>
+        {{view Reanimator.TimelineView}}
+      </div>
+
+
+
+      <div class="shapes">
+        <h4>Shapes</h4>
+        <div class="collection">
+          <ul>
+            {{#each shape in content.foregroundShapes}}
+            <li>
+              {{#view}}
+              <button>
+                {{view Reanimator.ShapeView shapeBinding="shape" canvasWidth="32" canvasHeight="32"}}
+              </button>
+              {{/view}}
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+
+
+      
+
+      <div class="properties"> 
+        <h4>Properties</h4>
+        <ul>
+          {{#each shape in content.selectedShapes}}
+          <li>
+            {{shape.properties.dump}}
+            <ul>
+              {{#each animation in shape.properties.animations}}
+              <li><a href="#" {{action animate shape animation}}>{{this.name}}</a></li>
+              {{/each}}
+            </ul>
+
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+
     </script>
 
     <script type="text/x-handlebars" data-template-name="timeline">

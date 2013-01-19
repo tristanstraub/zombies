@@ -22,11 +22,10 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state'], function(Ember, 
     },
 
     mouseMove: function(manager, event) {
-      var canvasView = event.context;
-      var offset = canvasView.$().offset();
+      var offsets = manager.getOffsets(event);
 
-      var dx = (event.pageX - offset.left) - get(this, 'startx');
-      var dy = (event.pageY - offset.top) - get(this, 'starty');
+      var dx = offsets.cx - get(this, 'startx');
+      var dy = offsets.cy - get(this, 'starty');
 
       var coords = get(this, 'coords');
       get(this, 'shapes').forEach(function(shape, index) {
@@ -39,8 +38,6 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state'], function(Ember, 
     },
 
     mouseUp: function(manager, event) {
-      var canvasView = event.context;
-
       manager.transitionTo('idle');
     }
   });

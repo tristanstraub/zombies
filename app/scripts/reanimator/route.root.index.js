@@ -28,6 +28,8 @@ define(['ember', 'livingdead/livingdead', 'reanimator/graph-shape', 'reanimator/
         */
         shapes: [],
 
+        foregroundShapes: [],
+        
         /**
            @property selectedBrush
            @return {Object} the selected brush or undefined
@@ -42,7 +44,8 @@ define(['ember', 'livingdead/livingdead', 'reanimator/graph-shape', 'reanimator/
           return MouseStateManager.create({
             //enableLogging: true,
             context: this,
-            shapesBinding: 'context.shapes'
+            shapesBinding: 'context.shapes',
+            foregroundShapesBinding: 'context.foregroundShapes'
           });
         }.property()
       });
@@ -96,5 +99,5 @@ define(['ember', 'livingdead/livingdead', 'reanimator/graph-shape', 'reanimator/
     choosePencilTool: function(router) {
       this.chooseTool('pencil');
     }
-  })
+  });
 });

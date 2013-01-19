@@ -3,8 +3,7 @@ define(['ember'], function(Ember) {
   
   var Properties = Ember.Object.extend();
 
-  Properties.reopenClass({
-    propertyNames: function() {
+  var recursiveNames = function() {
       var names = Array.prototype.slice.apply(arguments);
       var getNames = function() {
         var all = [];
@@ -14,7 +13,11 @@ define(['ember'], function(Ember) {
       };
 
       return getNames;
-    }
+    };
+
+  Properties.reopenClass({
+    propertyNames: recursiveNames,
+    propertyObserverNames: recursiveNames
   });
 
   return Properties;

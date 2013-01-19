@@ -1,17 +1,20 @@
-define(['ember', 'livingdead/shape', 'livingdead/properties'], function(Ember, LivingDeadShape, LivingDeadProperties) {
-    var set = Ember.set, get = Ember.get;
+define(['ember', 'livingdead/shape', 'livingdead/properties', 'livingdead/easel-bridge'], function(Ember, LivingDeadShape, LivingDeadProperties, EaselBridge) {
+  var set = Ember.set, get = Ember.get;
 
-    return LivingDeadShape.extend({
-        getPropertyNames: LivingDeadProperties.propertyNames('radius'),
+  return LivingDeadShape.extend({
+    getPropertyNames: LivingDeadProperties.propertyNames('radius'),
 
-        radius: 0,
+    radius: 0,
 
-        draw: function(bridge) {
-            bridge = bridge || get(this, 'bridge');
+    draw: function(bridge) {
+      Ember.assert("is bridge", !bridge || EaselBridge.detectInstance(bridge));
 
-            this.clear(bridge);
-            bridge.shapeDrawCircle(this);
+      bridge = bridge || get(this, 'bridge');
 
-        }.observes('radius')
-    });
+      this.clear(bridge);
+      if (bridge) {
+        bridge.shapeDrawCircle(this);
+      }
+    }
+  });
 });

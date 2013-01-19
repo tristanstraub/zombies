@@ -68,7 +68,7 @@ define(['livingdead/coreshape'], function(CoreShape) {
             (get(this, 'shapes') || []).forEach(function(shape) {
                 (bridge || get(this, 'bridge')).clearShape(shape);
             });
-        },
+        }
 
     });
 });

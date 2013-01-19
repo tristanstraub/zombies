@@ -1,4 +1,4 @@
-define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highlighter', 'reanimator/mouse-state-manager/state.tool'], function(Ember, MouseState, Highlighter, StateTool) {
+define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highlighter', 'reanimator/mouse-state-manager/state.tool', 'livingdead/livingdead'], function(Ember, MouseState, Highlighter, StateTool, LivingDead) {
   var set = Ember.set, get = Ember.get;
 
   return Ember.StateManager.extend({
@@ -8,16 +8,17 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
     highlightedShapes: null,
 
     rectangleHighlighter: null,
-    cursorHighlighter: null,
+//    cursorHighlighter: null,
 
     shapes: null,
+    foregroundShapes: null,
 
     init: function() {
       this._super.apply(this, arguments);
 
       set(this, 'highlightedShapes', []);
       set(this, 'rectangleHighlighter', Highlighter.create());
-      set(this, 'cursorHighlighter', Highlighter.create());
+//      set(this, 'cursorHighlighter', Highlighter.create());
 
       set(this, 'layers', Ember.Map.create());
     },
@@ -72,6 +73,17 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
     
     layers: null,
 
+    clearLayer: function(name) {
+      var layer = this.getLayer(name);
+      layer.forEach(function(shape) {
+        get(this, 'shapes').removeObject(shape);
+
+        if (name === "foreground") {
+          get(this, 'foregroundShapes').removeObject(shape);          
+        }
+      }, this);
+    },
+
     getLayer: function(name) {
       var layers = get(this, 'layers');
       if (layers.has(name)) {
@@ -83,20 +95,22 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
       }
     },
 
+    removeShape: function(shape) {
+      var layers = get(this, 'layers');
+      layers.keys.forEach(function(key) {
+        this.removeShapeFromLayer(shape);
+      }, this);
+    },
+
     addShapeToLayer: function(shape, layerName) {
       var layer = this.getLayer(layerName);
       layer.addObject(shape);
 
       get(this, 'shapes').addObject(shape);
-    },
 
-    removeShape: function(shape) {
-      var layers = get(this, 'layers');
-      layers.keys.forEach(function(key) {
-        layers.get(key).removeObject(shape);
-      });
-
-      get(this, 'shapes').removeObject(shape);
+      if (layerName === "foreground") {
+        get(this, 'foregroundShapes').addObject(shape);
+      }
     },
 
     removeShapeFromLayer: function(shape, layerName) {
@@ -104,6 +118,10 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
       layer.removeObject(shape);
 
       get(this, 'shapes').removeObject(shape);
+
+      if (layerName === "foreground") {
+        get(this, 'foregroundShapes').removeObject(shape);
+      }
     },
 
     highlightShapesAndPoints: function(manager, event) {
@@ -131,22 +149,34 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
       }
 
       this.highlightShapes(manager, shapes);
-      get(this, 'cursorHighlighter').highlightPoints(manager, points);
+//      get(this, 'cursorHighlighter').highlightPoints(manager, points);
+
+      
+      manager.clearLayer('pointHighlights');
+      points.forEach(function(point) {
+        var shape = new LivingDead.Circle({
+          x: point[0], 
+          y: point[1],
+          radius: 2
+        });
+
+        manager.addShapeToLayer(shape, 'pointHighlights');
+      });
     },
 
     highlightShapes: function(canvasView, shapes) {
-      set(this, 'highlightedShapes', shapes.mapProperty('brush'));
+      // set(this, 'highlightedShapes', shapes.mapProperty('brush'));
     },
 
     highlightPointsInRectangle: function(manager, x, y, width, height) {
-      var shapesPoints = manager.getContainedShapesPoints(x,y,width,height);
-      var points = shapesPoints
-            .mapProperty('points')
-            .reduce(function(a,b) {
-              a.pushObjects(b);
-              return a;
-            }, []);
-      get(this, 'rectangleHighlighter').highlightPoints(manager, points);
+      // var shapesPoints = manager.getContainedShapesPoints(x,y,width,height);
+      // var points = shapesPoints
+      //       .mapProperty('points')
+      //       .reduce(function(a,b) {
+      //         a.pushObjects(b);
+      //         return a;
+      //       }, []);
+      // get(this, 'rectangleHighlighter').highlightPoints(manager, points);
     }
   });
 });

@@ -1,5 +1,13 @@
 @import "compass_twitter_bootstrap";
 
+.tools {
+
+}
+
+.tools, .brushes, .shapes {
+
+}
+
 button {
     @extend .btn;
     &.selected { 

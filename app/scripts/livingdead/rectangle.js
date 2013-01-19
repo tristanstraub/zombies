@@ -15,10 +15,6 @@ define(['livingdead/shape', 'livingdead/properties'], function(LivingDeadShape, 
       }
     },
 
-    propertiesChanged: function() {
-      this.draw(get(this, 'bridge'));
-    }.observes('width', 'height'),
-
     getContainedPoints: function(x,y,w,h) {
       var cx = get(this, 'x');
       var cy = get(this, 'y');

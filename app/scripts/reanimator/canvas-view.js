@@ -55,6 +55,7 @@ define(['ember', 'livingdead/livingdead'], function(Ember, LivingDead) {
         enumerableWillChange: function(content, removed, added) {
           if (removed) {
             var bridge = get(this, 'bridge');
+
             removed.forEach(function(shape) {
               shape.removeFromStage(bridge);
             });
