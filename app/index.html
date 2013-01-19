@@ -98,27 +98,7 @@
           </ul>
         </div>
       </div>
-
-
-      
-
-      <div class="properties"> 
-        <h4>Properties</h4>
-        <ul>
-          {{#each shape in content.selectedShapes}}
-          <li>
-            {{shape.properties.dump}}
-            <ul>
-              {{#each animation in shape.properties.animations}}
-              <li><a href="#" {{action animate shape animation}}>{{this.name}}</a></li>
-              {{/each}}
-            </ul>
-
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-
+ 
     </script>
 
     <script type="text/x-handlebars" data-template-name="timeline">

@@ -102,13 +102,14 @@ define(['ember', 'livingdead/livingdead'], function(Ember, LivingDead) {
         didInsertElement: function() {
             var canvas = get(this, 'canvas');
 
-            var bridge = LivingDead.EaselBridge.create({
+            var bridge = new LivingDead.EaselBridge({
                 stage: new createjs.Stage(canvas.get(0))
             });
 
-            var factory = LivingDead.Factory.create({
+            var factory = new LivingDead.Factory({
                 bridge: bridge
             });
+
 
             set(this, 'bridge', bridge);
 

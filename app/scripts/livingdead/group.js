@@ -1,75 +1,87 @@
 define(['livingdead/coreshape'], function(CoreShape) {
-    var set = Ember.set, get = Ember.get;
+  var set = Ember.set, get = Ember.get;
 
-    return CoreShape.extend({
-        shapes: null,
+  return CoreShape.extend({
+    shapes: null,
 
-        draw: function(bridge) {
-            (get(this, 'shapes') || []).forEach(function(shape) {
-                shape.draw(bridge);
-            });
-        },
+    draw: function(bridge) {
+      (get(this, 'shapes') || []).forEach(function(shape) {
+        shape.draw(bridge);
+      });
+    },
 
-        init: function() {
-            this._super.apply(this, arguments);
+    init: function() {
+      this._super.apply(this, arguments);
 
-            this.updateParents();
-        },
+      this.updateParents();
+    },
 
-        updateParents: function() {
-            (get(this, 'shapes') || []).forEach(function(shape) {
-                set(shape, 'parent', this);
-            }, this);
-        },
+    updateParents: function() {
+      console.log('children', (get(this, 'shapes')||[]).length);
+      (get(this, 'shapes') || []).forEach(function(shape) {
+        set(shape, 'parent', this);
+      }, this);
+    },
 
-        shapesChanged: function() {
-            this.updateParents();
-            this.draw(get(this, 'bridge'));
-        }.observes('shapes.@each'),
+    shapesChanged: function() {
+      this.updateParents();
+      this.draw(get(this, 'bridge'));
+    }.observes('shapes', 'shapes.@each'),
 
-        getContainedPoints: function(x,y,w,h) {
-            var points = (get(this, 'shapes') || []).map(function(shape) {
-                return shape.getContainedPoints(x,y,w,h);
-            }).reduce(function(a, b) {
-                a.pushObjects(b);
-                return a;
-            }, []);
-            return points;
-        },
+    getContainedPoints: function(x,y,w,h) {
+      var points = (get(this, 'shapes') || []).map(function(shape) {
+        var spoints = shape.getContainedPoints(x,y,w,h);
+        return spoints;
+      }).reduce(function(a, b) {
+        a.pushObjects(b);
+        return a;
+      }, []);
+      return points;
+    },
 
-        copy: function(deep) {
-            return this.constructor.create(this.copyProperties(deep), {
-                shapes: (get(this, 'shapes') || []).map(function(shape) {
-                    return shape.copy(deep);
-                })
-            });
-        },
+    createMirror: function() {
+      var mirror = this._super.apply(this, arguments);
+        var shapesMirrors = (get(this, 'shapes') || []).map(function(shape) {
+          return shape.createMirror();
+        });
 
-        addToStage: function(bridge) {
-            bridge = bridge || get(this, 'bridge');
-            set(this, 'bridge', bridge);
+      set(mirror, 'shapes', shapesMirrors);
+      return mirror;
+    },
 
-            this.draw(bridge);
-            (get(this, 'shapes') || []).forEach(function(shape) {
-                bridge.addShapeToStage(shape);
-            });
-        },
+    copy: function(deep) {
+      return new this.constructor({
+        shapes: (get(this, 'shapes') || []).map(function(shape) {
+          return shape.copy(deep);
+        })
+      });
+    },
 
-        removeFromStage: function(bridge) {
-            bridge = bridge || get(this, 'bridge');
-            set(this, 'bridge', bridge);
+    addToStage: function(bridge) {
+      bridge = bridge || get(this, 'bridge');
+      set(this, 'bridge', bridge);
 
-            (get(this, 'shapes') || []).forEach(function(shape) {
-                bridge.removeShapeFromStage(shape);
-            });
-        },
+      this.draw(bridge);
+      (get(this, 'shapes') || []).forEach(function(shape) {
+        bridge.addShapeToStage(shape);
+      });
+    },
 
-        clear: function(bridge) {
-            (get(this, 'shapes') || []).forEach(function(shape) {
-                (bridge || get(this, 'bridge')).clearShape(shape);
-            });
-        }
+    removeFromStage: function(bridge) {
+      bridge = bridge || get(this, 'bridge');
+      set(this, 'bridge', bridge);
 
-    });
+      (get(this, 'shapes') || []).forEach(function(shape) {
+        bridge.removeShapeFromStage(shape);
+      });
+    },
+
+    clear: function(bridge) {
+      (get(this, 'shapes') || []).forEach(function(shape) {
+        (bridge || get(this, 'bridge')).clearShape(shape);
+      });
+    }
+
+  });
 });
 

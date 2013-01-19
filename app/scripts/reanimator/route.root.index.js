@@ -41,11 +41,14 @@ define(['ember', 'livingdead/livingdead', 'reanimator/graph-shape', 'reanimator/
            @return {Object} the state manager for the mouse
         */
         canvasMouseStateManager: function() {
-          return MouseStateManager.create({
+          var CanvasMouseStateManager = MouseStateManager.extend({
             //enableLogging: true,
-            context: this,
+            context: null,
             shapesBinding: 'context.shapes',
             foregroundShapesBinding: 'context.foregroundShapes'
+          });
+          return new CanvasMouseStateManager({
+            context: this
           });
         }.property()
       });

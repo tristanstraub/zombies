@@ -3,6 +3,7 @@ define(['livingdead/shape', 'livingdead/properties'], function(LivingDeadShape, 
 
   return LivingDeadShape.extend({
     getPropertyNames: LivingDeadProperties.propertyNames('edge'),
+    getPropertyObserverNames: LivingDeadProperties.propertyObserverNames('edge.@each'),
 
     edge: null,
 
@@ -13,8 +14,6 @@ define(['livingdead/shape', 'livingdead/properties'], function(LivingDeadShape, 
         bridge.shapeDrawLine(this);
       }
     },
-
-    getPropertyObserverNames: LivingDeadProperties.propertyObserverNames('edge.@each'),
 
     getContainedPoints: function(x,y,w,h) {
       var cx = get(this, 'x') + (get(this, 'parent.x')||0);

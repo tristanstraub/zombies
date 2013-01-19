@@ -1,13 +1,13 @@
-define(['ember'], function(Ember) {
+define(['ember', 'livingdead/livingdead'], function(Ember, LivingDead) {
   var set = Ember.set, get = Ember.get;
 
-  return Ember.Object.extend({
+  return LivingDead.Object.extend({
     init: function() {
       this._super.apply(this, arguments);
       set(this, 'canvas', get(this, 'canvas').create());
     },
 
-    canvas: Ember.Object.extend({
+    canvas: LivingDead.Object.extend({
       view: function() {
         console.log(Ember.View.views[('main-canvas')]);
         return Ember.View.views[('main-canvas')];

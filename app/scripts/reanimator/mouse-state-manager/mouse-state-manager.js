@@ -1,14 +1,13 @@
 define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highlighter', 'reanimator/mouse-state-manager/state.tool', 'livingdead/livingdead'], function(Ember, MouseState, Highlighter, StateTool, LivingDead) {
   var set = Ember.set, get = Ember.get;
 
-  return Ember.StateManager.extend({
+  return Ember.StateManager.extend(LivingDead.Soul, {
     //    enableLogging: true,
     initialState: 'idle',
 
     highlightedShapes: null,
 
     rectangleHighlighter: null,
-//    cursorHighlighter: null,
 
     shapes: null,
     foregroundShapes: null,
@@ -17,10 +16,9 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
       this._super.apply(this, arguments);
 
       set(this, 'highlightedShapes', []);
-      set(this, 'rectangleHighlighter', Highlighter.create());
-//      set(this, 'cursorHighlighter', Highlighter.create());
+      set(this, 'rectangleHighlighter', new Highlighter());
 
-      set(this, 'layers', Ember.Map.create());
+      set(this, 'layers', new Ember.Map());
     },
 
     getOffsets: function(event) {
@@ -89,7 +87,7 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
       if (layers.has(name)) {
         return layers.get(name);
       } else {
-        var layer = Ember.Set.create();
+        var layer = new Ember.Set();
         layers.set(name, layer);
         return layer;
       }
@@ -98,7 +96,7 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
     removeShape: function(shape) {
       var layers = get(this, 'layers');
       layers.keys.forEach(function(key) {
-        this.removeShapeFromLayer(shape);
+        this.removeShapeFromLayer(shape, key);
       }, this);
     },
 

@@ -5,7 +5,7 @@ define(['ember', 'livingdead/livingdead'], function(Ember, LivingDead) {
   var Z = LivingDead.Z;
   var P = LivingDead.P;
 
-  return Ember.Object.extend({
+  return LivingDead.Object.extend({
     highlightedPoints: [],
 
     init: function() {
@@ -15,7 +15,7 @@ define(['ember', 'livingdead/livingdead'], function(Ember, LivingDead) {
     
     highlightPoints: function(manager, points) {
       pointShapes = points.map(function(point) {
-        var shape = LivingDead.Circle.create({
+        var shape = new LivingDead.Circle({
           x: point[0], 
           y: point[1],
           radius: 2

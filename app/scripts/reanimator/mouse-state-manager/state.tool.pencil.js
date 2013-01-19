@@ -60,7 +60,7 @@ define(['ember', 'livingdead/livingdead', 'reanimator/mouse-state-manager/mouse-
           startPoint = [offsets.cx,offsets.cy];
         }
 
-        var line = LivingDead.Line.create({
+        var line = new LivingDead.Line({
           edge: [Ember.copy(startPoint),[offsets.cx,offsets.cy]],
           x: 0,
           y: 0

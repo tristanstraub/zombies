@@ -1,6 +1,34 @@
 define(['ember', 'livingdead/object', 'livingdead/bridged'], function(Ember, LivingDeadObject, LivingDeadBridged) {
   var set = Ember.set, get = Ember.get;
 
+  var shapePropertyAdderSetter = function(name) {
+    return function() {
+      var shape = get(this, 'shape');
+      if (shape) {
+        var parent = get(this, 'parent');
+
+        var value = get(this, name);
+        var parentValue = parent ? get(parent, name) : 0;
+
+        shape[name] = value + parentValue;
+      }
+    }.observes(name, 'parent.' + name);
+  };
+
+  var shapePropertyMultSetter = function(name) {
+    return function() {
+      var shape = get(this, 'shape');
+      if (shape) {
+        var parent = get(this, 'parent');
+
+        var value = get(this, name);
+        var parentValue = parent ? get(parent, name) : 1;
+
+        shape[name] = value * parentValue;
+      }
+    }.observes(name, 'parent.' + name);
+  };
+
   return LivingDeadObject.extend(Ember.Copyable, LivingDeadBridged, {
     id: function() { return Ember.guidFor(this); }.property(),
     parent: null,
@@ -10,12 +38,17 @@ define(['ember', 'livingdead/object', 'livingdead/bridged'], function(Ember, Liv
     scaleX: 1,
     scaleY: 1,
 
+    xChanged: shapePropertyAdderSetter('x'),
+    yChanged: shapePropertyAdderSetter('y'),
+    scaleXChanged: shapePropertyMultSetter('scaleX'),
+    scaleYChanged: shapePropertyMultSetter('scaleY'),
+
     getPropertyNames: function() {
       return ['x','y','scaleX','scaleY'];
     },
 
     getPropertyObserverNames: function() {
-      return this.getPropertyNames();
+      return [];
     },
 
     init: function() {

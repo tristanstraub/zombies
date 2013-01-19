@@ -1,7 +1,7 @@
-define(['easeljs', 'ember'], function(createjs, Ember) {
+define(['easeljs', 'ember', 'livingdead/object'], function(createjs, Ember, LivingDeadObject) {
     var set = Ember.set, get = Ember.get;
 
-    return Ember.Object.extend({
+    return LivingDeadObject.extend({
         stage: null,
 
         updateStage: function() {

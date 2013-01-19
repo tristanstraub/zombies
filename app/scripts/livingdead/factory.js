@@ -1,7 +1,7 @@
 define(['ember', 'livingdead/object', 'livingdead/gameloop', 'livingdead/shape', 'livingdead/path'], function(Ember, LivingDeadObject, LivingDeadGameLoop, LivingDeadShape, LivingDeadPath) {    
     var set = Ember.set, get = Ember.get;
 
-    return Ember.Object.extend({
+    return LivingDeadObject.extend({
         bridge: null,
 
         createType: function(type, options) {

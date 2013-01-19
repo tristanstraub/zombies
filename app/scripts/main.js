@@ -37,5 +37,5 @@ require.config({
 });
 
 require(['reanimator/reanimator', 'test-helper'], function(Reanimator, TestHelper) {
-  window.testHelper = TestHelper.create();
+  window.testHelper = new TestHelper();
 });

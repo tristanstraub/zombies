@@ -3,6 +3,7 @@ define(['livingdead/shape', 'livingdead/properties'], function(LivingDeadShape, 
 
   return LivingDeadShape.extend({
     getPropertyNames: LivingDeadProperties.propertyNames('width', 'height'),
+    getPropertyObserverNames: LivingDeadProperties.propertyObserverNames('x','y','width','height'),
 
     width: 0,
     height: 0,

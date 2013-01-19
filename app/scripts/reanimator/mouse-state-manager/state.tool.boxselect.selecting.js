@@ -75,7 +75,6 @@ define(['ember', 'livingdead/livingdead', 'reanimator/mouse-state-manager/mouse-
       var height = get(this, 'context.rectangle.height');
       var shapesPoints = manager.getContainedShapesPoints(x,y,width,height);
 
-      this.highlights(manager, event);
       manager.removeShapeFromLayer(rectangle, 'overlay');
       set(this, 'context.rectangle', null);
 
@@ -90,6 +89,7 @@ define(['ember', 'livingdead/livingdead', 'reanimator/mouse-state-manager/mouse-
         }), 'foreground');
       }
 
+      this.highlights(manager, event);
       manager.transitionTo('idle');
     }
   });

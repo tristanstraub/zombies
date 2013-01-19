@@ -1,7 +1,7 @@
-define(['ember'], function(Ember) {
+define(['ember', 'livingdead/object'], function(Ember, LivingDeadObject) {
   var set = Ember.set, get = Ember.get;
   
-  var Properties = Ember.Object.extend();
+  var Properties = LivingDeadObject.extend();
 
   var recursiveNames = function() {
       var names = Array.prototype.slice.apply(arguments);

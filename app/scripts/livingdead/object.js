@@ -1,15 +1,7 @@
-define(['ember'], function(Ember) {
+define(['ember', 'livingdead/soul'], function(Ember, LivingDeadSoul) {
   var set = Ember.set, get = Ember.get;
 
-  return Ember.Object.extend({
-    init: function(properties) {
-      this._super.apply(this, arguments);
-
-      if (properties) {
-        this.setProperties(properties);
-      }
-    },
-
+  return Ember.Object.extend(LivingDeadSoul, {
     dump: function() {
       return Ember.inspect(this);
     }.property().volatile()

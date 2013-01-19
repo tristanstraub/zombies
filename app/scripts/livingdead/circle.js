@@ -11,8 +11,8 @@ define(['ember', 'livingdead/shape', 'livingdead/properties', 'livingdead/easel-
 
       bridge = bridge || get(this, 'bridge');
 
-      this.clear(bridge);
       if (bridge) {
+        this.clear(bridge);
         bridge.shapeDrawCircle(this);
       }
     }
