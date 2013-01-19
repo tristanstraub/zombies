@@ -63,7 +63,7 @@ define(['livingdead/coreshape'], function(CoreShape) {
 
       this.draw(bridge);
       (get(this, 'shapes') || []).forEach(function(shape) {
-        bridge.addShapeToStage(shape);
+        shape.addToStage(bridge);
       });
     },
 
@@ -72,7 +72,7 @@ define(['livingdead/coreshape'], function(CoreShape) {
       set(this, 'bridge', bridge);
 
       (get(this, 'shapes') || []).forEach(function(shape) {
-        bridge.removeShapeFromStage(shape);
+        shape.removeFromStage(bridge);
       });
     },
 
