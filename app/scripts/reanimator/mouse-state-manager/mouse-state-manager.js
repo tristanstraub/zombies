@@ -31,6 +31,44 @@ define(['ember', 'reanimator/mouse-state-manager/mouse-state', 'reanimator/highl
       return { offset: offset, cx: cx, cy: cy };
     },
 
+    distance: function(a,b) {
+      var dx = a.objectAt(0)-b.objectAt(0);
+      var dy = a.objectAt(1)-b.objectAt(1);
+      return Math.sqrt(dx*dx+dy*dy);
+    },
+
+    getFirstNearestLineEndPoint: function(cx, cy, shape) {
+      var shapesPoints = this.shapesAtPoint(cx, cy);
+      var self = this;
+
+      if (shapesPoints.length > 0) {
+        var lines = shapesPoints;
+
+        if (lines.length > 0) {
+          var point = shapesPoints.mapProperty('points').reduce(function(a,b) {
+            a.pushObjects(b);
+            return a;
+          }, []).reduce(function(a, b) {
+            if (!a)
+              return b;
+
+            var d1 = self.distance(a, [cx, cy]);
+            var d2 = self.distance(b, [cx, cy]);
+            
+            if (d1 <= d2) {
+              return a;
+            } else {
+              return b;
+            }
+          }, null);
+
+          return point;
+        }
+      }
+
+      return null;
+    },
+
     shapesAtPoint: function(x, y) {
       return this.getLayer('foreground').map(function(shape) {
         var w=20;
